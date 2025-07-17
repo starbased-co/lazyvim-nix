@@ -1,0 +1,30 @@
+# Nix
+result
+result-*
+.direnv/
+*.drv
+/nix/
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Project specific
+/tmp/
+/temp/
+*.log
+*.bak
+
+# Test artifacts
+/test/temp/
+/test/tmp/
+
+# Keep docs directory local only
+/docs/

@@ -1,0 +1,272 @@
+{
+  "version": "stable",
+  "generated": "2025-07-16 18:19:29",
+  "plugins": [
+    {
+      "config": [
+        "LazyVim/LazyVim",
+        [
+          "echasnovski/mini.pairs"
+        ],
+        [
+          "folke/ts-comments.nvim"
+        ],
+        [
+          "echasnovski/mini.ai"
+        ],
+        [
+          "folke/lazydev.nvim"
+        ],
+        [
+          "folke/tokyonight.nvim"
+        ],
+        [
+          "catppuccin/nvim"
+        ],
+        [
+          "MagicDuck/grug-far.nvim"
+        ],
+        [
+          "folke/flash.nvim"
+        ],
+        [
+          "folke/which-key.nvim"
+        ],
+        [
+          "lewis6991/gitsigns.nvim"
+        ],
+        [
+          "gitsigns.nvim"
+        ],
+        [
+          "folke/trouble.nvim"
+        ],
+        [
+          "folke/todo-comments.nvim"
+        ],
+        [
+          "stevearc/conform.nvim"
+        ],
+        [
+          "mfussenegger/nvim-lint"
+        ],
+        [
+          "folke/which-key.nvim"
+        ],
+        [
+          "nvim-treesitter/nvim-treesitter"
+        ],
+        [
+          "nvim-treesitter/nvim-treesitter-textobjects"
+        ],
+        [
+          "windwp/nvim-ts-autotag"
+        ],
+        [
+          "snacks.nvim"
+        ],
+        [
+          "folke/persistence.nvim"
+        ],
+        [
+          "nvim-lua/plenary.nvim"
+        ]
+      ],
+      "loadOrder": 0,
+      "name": "LazyVim/LazyVim",
+      "dependencies": {
+      }
+    },
+    {
+      "config": [
+        "echasnovski/mini.pairs"
+      ],
+      "loadOrder": 2,
+      "name": "echasnovski/mini.pairs",
+      "dependencies": {
+      }
+    },
+    {
+      "config": [
+        "folke/ts-comments.nvim"
+      ],
+      "loadOrder": 3,
+      "name": "folke/ts-comments.nvim",
+      "dependencies": {
+      }
+    },
+    {
+      "config": [
+        "echasnovski/mini.ai"
+      ],
+      "loadOrder": 4,
+      "name": "echasnovski/mini.ai",
+      "dependencies": {
+      }
+    },
+    {
+      "config": [
+        "folke/lazydev.nvim"
+      ],
+      "loadOrder": 5,
+      "name": "folke/lazydev.nvim",
+      "dependencies": {
+      }
+    },
+    {
+      "config": [
+        "folke/tokyonight.nvim"
+      ],
+      "loadOrder": 6,
+      "name": "folke/tokyonight.nvim",
+      "dependencies": {
+      }
+    },
+    {
+      "config": [
+        "catppuccin/nvim"
+      ],
+      "loadOrder": 7,
+      "name": "catppuccin",
+      "dependencies": {
+      }
+    },
+    {
+      "config": [
+        "MagicDuck/grug-far.nvim"
+      ],
+      "loadOrder": 8,
+      "name": "MagicDuck/grug-far.nvim",
+      "dependencies": {
+      }
+    },
+    {
+      "config": [
+        "folke/flash.nvim"
+      ],
+      "loadOrder": 9,
+      "name": "folke/flash.nvim",
+      "dependencies": {
+      }
+    },
+    {
+      "config": [
+        "folke/which-key.nvim"
+      ],
+      "loadOrder": 10,
+      "name": "folke/which-key.nvim",
+      "dependencies": {
+      }
+    },
+    {
+      "config": [
+        "lewis6991/gitsigns.nvim"
+      ],
+      "loadOrder": 11,
+      "name": "lewis6991/gitsigns.nvim",
+      "dependencies": {
+      }
+    },
+    {
+      "config": [
+        "gitsigns.nvim"
+      ],
+      "loadOrder": 12,
+      "name": "gitsigns.nvim",
+      "dependencies": {
+      }
+    },
+    {
+      "config": [
+        "folke/trouble.nvim"
+      ],
+      "loadOrder": 13,
+      "name": "folke/trouble.nvim",
+      "dependencies": {
+      }
+    },
+    {
+      "config": [
+        "folke/todo-comments.nvim"
+      ],
+      "loadOrder": 14,
+      "name": "folke/todo-comments.nvim",
+      "dependencies": {
+      }
+    },
+    {
+      "config": [
+        "stevearc/conform.nvim"
+      ],
+      "loadOrder": 15,
+      "name": "stevearc/conform.nvim",
+      "dependencies": [
+        "mason.nvim"
+      ]
+    },
+    {
+      "config": [
+        "mfussenegger/nvim-lint"
+      ],
+      "loadOrder": 16,
+      "name": "mfussenegger/nvim-lint",
+      "dependencies": {
+      }
+    },
+    {
+      "config": [
+        "nvim-treesitter/nvim-treesitter"
+      ],
+      "loadOrder": 18,
+      "name": "nvim-treesitter/nvim-treesitter",
+      "dependencies": {
+      }
+    },
+    {
+      "config": [
+        "nvim-treesitter/nvim-treesitter-textobjects"
+      ],
+      "loadOrder": 19,
+      "name": "nvim-treesitter/nvim-treesitter-textobjects",
+      "dependencies": {
+      }
+    },
+    {
+      "config": [
+        "windwp/nvim-ts-autotag"
+      ],
+      "loadOrder": 20,
+      "name": "windwp/nvim-ts-autotag",
+      "dependencies": {
+      }
+    },
+    {
+      "config": [
+        "snacks.nvim"
+      ],
+      "loadOrder": 21,
+      "name": "snacks.nvim",
+      "dependencies": {
+      }
+    },
+    {
+      "config": [
+        "folke/persistence.nvim"
+      ],
+      "loadOrder": 22,
+      "name": "folke/persistence.nvim",
+      "dependencies": {
+      }
+    },
+    {
+      "config": [
+        "nvim-lua/plenary.nvim"
+      ],
+      "loadOrder": 23,
+      "name": "nvim-lua/plenary.nvim",
+      "dependencies": {
+      }
+    }
+  ],
+  "commit": "25abbf546d564dc484cf903804661ba12de45507"
+}
