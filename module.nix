@@ -76,10 +76,16 @@ let
   # Helper function to create dev path with proper symlinks for all plugins
   createDevPath = allPluginSpecs: allResolvedPlugins: extraSpecs: extraPlugins:
     let
-      # Create symlinks using the original plugin spec names
+      # Extract repository name from plugin spec (e.g., "owner/repo.nvim" -> "repo.nvim")
+      getRepoName = specName:
+        let parts = lib.splitString "/" specName;
+        in if length parts == 2 then elemAt parts 1 else specName;
+      
+      # Create symlinks using the repository names that LazyVim expects
       mainLinks = lib.zipListsWith (spec: plugin:
         if plugin != null then
-          "ln -sf ${plugin} $out/${spec.name}"
+          let repoName = getRepoName spec.name;
+          in "ln -sf ${plugin} $out/${repoName}"
         else
           null
       ) allPluginSpecs allResolvedPlugins;
@@ -87,7 +93,8 @@ let
       # Create symlinks for extra plugins
       extraLinks = lib.zipListsWith (spec: plugin:
         if plugin != null then
-          "ln -sf ${plugin} $out/${spec.name}"
+          let repoName = getRepoName spec.name;
+          in "ln -sf ${plugin} $out/${repoName}"
         else
           null
       ) extraSpecs extraPlugins;
