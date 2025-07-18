@@ -115,24 +115,6 @@
     },
     {
       "config": [
-        "folke/tokyonight.nvim"
-      ],
-      "loadOrder": 6,
-      "name": "folke/tokyonight.nvim",
-      "dependencies": {
-      }
-    },
-    {
-      "config": [
-        "catppuccin/nvim"
-      ],
-      "loadOrder": 7,
-      "name": "catppuccin",
-      "dependencies": {
-      }
-    },
-    {
-      "config": [
         "MagicDuck/grug-far.nvim"
       ],
       "loadOrder": 8,

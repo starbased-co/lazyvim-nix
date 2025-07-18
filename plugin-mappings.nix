@@ -32,13 +32,8 @@
   
   # Plugins that don't follow standard naming conventions
   "L3MON4D3/LuaSnip" = "luasnip";
-  "catppuccin/nvim" = "catppuccin-nvim";
-  "rose-pine/neovim" = "rose-pine";
-  "catppuccin" = "catppuccin-nvim";  # Alternative name sometimes used
   "folke/ts-comments.nvim" = "ts-comments-nvim";
   "MagicDuck/grug-far.nvim" = "grug-far-nvim";
-  "aktersnurra/no-clown-fiesta" = "no-clown-fiesta-nvim";
-  "swaits/zellij-nav.nvim" = "zellij-nav-nvim";
   "nvim-neo-tree/neo-tree.nvim" = "neo-tree-nvim";
   "nvim-lualine/lualine.nvim" = "lualine-nvim";
   "akinsho/bufferline.nvim" = "bufferline-nvim";
