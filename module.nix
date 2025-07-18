@@ -28,8 +28,97 @@ let
       else
         mapping.package;
   
-  # Build the list of vim plugins from nixpkgs
-  resolvedPlugins = map (pluginSpec:
+  # Helper function to detect multi-module plugins
+  detectMultiModulePlugins = pluginSpecs:
+    let
+      isMultiModulePlugin = pluginSpec:
+        let
+          mapping = pluginMappings.${pluginSpec.name} or null;
+        in
+          mapping != null && builtins.isAttrs mapping && mapping ? module;
+    in
+      filter isMultiModulePlugin pluginSpecs;
+  
+  # Helper function to expand multi-module plugins into individual entries
+  expandMultiModulePlugins = pluginSpecs:
+    let
+      multiModulePlugins = detectMultiModulePlugins pluginSpecs;
+      regularPlugins = filter (spec: 
+        let
+          mapping = pluginMappings.${spec.name} or null;
+        in
+          mapping == null || builtins.isString mapping || !(mapping ? module)
+      ) pluginSpecs;
+      
+      # Create individual entries for multi-module plugins
+      expandedEntries = map (pluginSpec:
+        let
+          mapping = pluginMappings.${pluginSpec.name};
+          nixName = resolvePluginName pluginSpec.name;
+          plugin = pkgs.vimPlugins.${nixName} or null;
+        in
+          if plugin == null then
+            null
+          else
+            {
+              name = mapping.module;  # Use module name for LazyVim to find
+              nixName = nixName;
+              plugin = plugin;
+              originalSpec = pluginSpec;
+            }
+      ) multiModulePlugins;
+    in
+      {
+        regular = regularPlugins;
+        expanded = filter (entry: entry != null) expandedEntries;
+      };
+
+  # Helper function to create dev path with proper symlinks for multi-module plugins
+  createDevPath = regularPlugins: expandedPlugins:
+    let
+      # Create symlinks for regular plugins
+      regularLinks = map (plugin: 
+        let
+          # Get the actual plugin name from the derivation
+          # Remove version suffixes and clean up the name
+          pluginName = 
+            let
+              rawName = if plugin ? pname then plugin.pname else 
+                let 
+                  baseName = builtins.parseDrvName plugin.name;
+                  # Remove common suffixes like -unstable-2024-01-01
+                  cleanName = builtins.head (lib.splitString "-unstable" baseName.name);
+                  # Remove vimplugin- prefix if present
+                  withoutPrefix = lib.removePrefix "vimplugin-" cleanName;
+                  # Remove luajit2.1- prefix if present
+                  withoutLuajit = lib.removePrefix "luajit2.1-" withoutPrefix;
+                  # Remove -scm suffix if present
+                  withoutScm = builtins.head (lib.splitString "-scm" withoutLuajit);
+                in withoutScm;
+            in
+              # Replace dots with dashes to avoid directory issues
+              lib.replaceStrings ["."] ["-"] rawName;
+        in
+          "ln -sf ${plugin} $out/${pluginName}"
+      ) regularPlugins;
+      
+      # Create symlinks for multi-module plugins
+      expandedLinks = map (entry:
+        "ln -sf ${entry.plugin} $out/${entry.name}"
+      ) expandedPlugins;
+      
+      allLinks = regularLinks ++ expandedLinks;
+    in
+      pkgs.runCommand "lazyvim-dev-path" {} ''
+        mkdir -p $out
+        ${lib.concatStringsSep "\n" allLinks}
+      '';
+
+  # Expand multi-module plugins and separate regular plugins
+  pluginSeparation = expandMultiModulePlugins (pluginData.plugins or []);
+  
+  # Build the list of regular vim plugins from nixpkgs
+  resolvedRegularPlugins = map (pluginSpec:
     let
       nixName = resolvePluginName pluginSpec.name;
       plugin = pkgs.vimPlugins.${nixName} or null;
@@ -38,10 +127,30 @@ let
         builtins.trace "Warning: Could not find plugin ${pluginSpec.name} (tried ${nixName})" null
       else
         plugin
-  ) (pluginData.plugins or []);
+  ) pluginSeparation.regular;
   
   # Filter out null plugins
-  availablePlugins = filter (p: p != null) resolvedPlugins;
+  availableRegularPlugins = filter (p: p != null) resolvedRegularPlugins;
+  
+  # Multi-module plugins are already resolved in expandMultiModulePlugins
+  availableExpandedPlugins = pluginSeparation.expanded;
+  
+  # Resolve extra plugins from user configuration
+  resolvedExtraPlugins = map (pluginSpec:
+    let
+      nixName = resolvePluginName pluginSpec.name;
+      plugin = pkgs.vimPlugins.${nixName} or null;
+    in
+      if plugin == null then
+        builtins.trace "Warning: Could not find extra plugin ${pluginSpec.name} (tried ${nixName})" null
+      else
+        plugin
+  ) (cfg.extraPlugins or []);
+  
+  availableExtraPlugins = filter (p: p != null) resolvedExtraPlugins;
+  
+  # Create the dev path with proper symlinks including extra plugins
+  devPath = createDevPath (availableRegularPlugins ++ availableExtraPlugins) availableExpandedPlugins;
   
   # Generate lazy.nvim configuration
   lazyConfig = ''
@@ -65,7 +174,7 @@ let
     require("lazy").setup({
       defaults = { lazy = true },
       dev = {
-        path = "${pkgs.symlinkJoin { name = "lazyvim-plugins"; paths = availablePlugins; }}/share/vim-plugins",
+        path = "${devPath}",
         patterns = { "" },
         fallback = false,
       },
@@ -75,13 +184,12 @@ let
         { "williamboman/mason.nvim", enabled = false },
         { "williamboman/mason-lspconfig.nvim", enabled = false },
         { "jay-babu/mason-nvim-dap.nvim", enabled = false },
-        -- Disable treesitter auto-install
+        -- Disable treesitter auto-install - simple approach like your old config
         { 
           "nvim-treesitter/nvim-treesitter", 
-          opts = { 
-            ensure_installed = {},
-            auto_install = false,
-          },
+          opts = function(_, opts)
+            opts.ensure_installed = {}
+          end,
           dev = true,
         },
         -- User plugins
@@ -106,7 +214,7 @@ let
     -- Apply user settings
     ${optionalString (cfg.settings != {}) ''
       -- User settings
-      ${if cfg.settings ? colorscheme then "vim.cmd.colorscheme('${cfg.settings.colorscheme}')" else ""}
+      ${if cfg.settings ? colorscheme && cfg.settings.colorscheme != null then "vim.cmd.colorscheme('${cfg.settings.colorscheme}')" else ""}
       ${optionalString (cfg.settings ? options) (
         concatStringsSep "\n" (mapAttrsToList (name: value: 
           "vim.opt.${name} = ${if isBool value then (if value then "true" else "false") else toString value}"
@@ -115,13 +223,17 @@ let
     ''}
   '';
   
-  # Treesitter configuration
-  treesitterGrammars = pkgs.symlinkJoin {
-    name = "treesitter-grammars";
-    paths = map (name: pkgs.vimPlugins.nvim-treesitter.grammarPlugins.${name} or 
-      (builtins.trace "Warning: Treesitter parser '${name}' not found" null)
-    ) cfg.treesitterParsers;
-  };
+  # Treesitter configuration - exact same approach as your old implementation  
+  treesitterGrammars = let
+    parsers = pkgs.symlinkJoin {
+      name = "treesitter-parsers";
+      paths = (pkgs.vimPlugins.nvim-treesitter.withPlugins (plugins: 
+        map (name: pkgs.tree-sitter-grammars."tree-sitter-${name}" or 
+          (builtins.trace "Warning: Treesitter parser '${name}' not found" null)
+        ) (filter (p: p != null) cfg.treesitterParsers)
+      )).dependencies;
+    };
+  in parsers;
 
 in {
   options.programs.lazyvim = {
@@ -221,38 +333,41 @@ in {
         # Language servers and tools can be added by the user
       ]);
       
-      # Don't use the built-in plugin management
-      configure = {
-        packages.myVimPackage = {
-          start = [ pkgs.vimPlugins.lazy-nvim ];
-        };
-      };
+      # Add lazy.nvim as a plugin
+      plugins = [ pkgs.vimPlugins.lazy-nvim ];
     };
     
     # Create LazyVim configuration
     xdg.configFile = {
       "nvim/init.lua".text = lazyConfig;
       
-      # Link treesitter parsers
+      # Link treesitter parsers - exact same approach as your old config
       "nvim/parser".source = "${treesitterGrammars}/parser";
-      
-      # Create queries directory for treesitter
-      "nvim/queries" = {
-        source = pkgs.symlinkJoin {
-          name = "treesitter-queries";
-          paths = map (grammar: "${grammar}/queries") 
-            (filter (g: g != null) 
-              (map (name: pkgs.vimPlugins.nvim-treesitter.grammarPlugins.${name} or null) 
-                cfg.treesitterParsers));
-        };
-        recursive = true;
-      };
       
       # Add extra plugin configurations if provided
       "nvim/lua/plugins/nix-extra.lua" = mkIf (cfg.extraPlugins != []) {
-        text = ''
+        text = let
+          # Convert plugin specs to Lua format
+          pluginToLua = plugin: 
+            let
+              # For lazy.nvim, the first element should be the plugin name
+              name = plugin.name;
+              otherAttrs = lib.filterAttrs (n: v: n != "name" && v != null) plugin;
+              attrToLua = name: value:
+                if value == true then "${name} = true"
+                else if value == false then "${name} = false"
+                else if builtins.isString value then ''${name} = "${value}"''
+                else "${name} = ${toString value}";
+              luaAttrs = lib.concatStringsSep ", " (lib.mapAttrsToList attrToLua otherAttrs);
+            in
+              if luaAttrs == "" then ''"${name}"''
+              else ''{ "${name}", ${luaAttrs} }'';
+          pluginsLua = lib.concatMapStringsSep ",\n  " pluginToLua cfg.extraPlugins;
+        in ''
           -- Extra plugins configured via Nix
-          return ${builtins.toJSON cfg.extraPlugins}
+          return {
+            ${pluginsLua}
+          }
         '';
       };
     };
