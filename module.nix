@@ -73,52 +73,41 @@ let
         expanded = filter (entry: entry != null) expandedEntries;
       };
 
-  # Helper function to create dev path with proper symlinks for multi-module plugins
-  createDevPath = regularPlugins: expandedPlugins:
+  # Helper function to create dev path with proper symlinks for all plugins
+  createDevPath = allPluginSpecs: allResolvedPlugins: extraSpecs: extraPlugins:
     let
-      # Create symlinks for regular plugins
-      regularLinks = map (plugin: 
-        let
-          # Get the actual plugin name from the derivation
-          # Remove version suffixes and clean up the name
-          pluginName = 
-            let
-              rawName = if plugin ? pname then plugin.pname else 
-                let 
-                  baseName = builtins.parseDrvName plugin.name;
-                  # Remove common suffixes like -unstable-2024-01-01
-                  cleanName = builtins.head (lib.splitString "-unstable" baseName.name);
-                  # Remove vimplugin- prefix if present
-                  withoutPrefix = lib.removePrefix "vimplugin-" cleanName;
-                  # Remove luajit2.1- prefix if present
-                  withoutLuajit = lib.removePrefix "luajit2.1-" withoutPrefix;
-                  # Remove -scm suffix if present
-                  withoutScm = builtins.head (lib.splitString "-scm" withoutLuajit);
-                in withoutScm;
-            in
-              # Replace dots with dashes to avoid directory issues
-              lib.replaceStrings ["."] ["-"] rawName;
-        in
-          "ln -sf ${plugin} $out/${pluginName}"
-      ) regularPlugins;
+      # Create symlinks using the original plugin spec names
+      mainLinks = lib.zipListsWith (spec: plugin:
+        if plugin != null then
+          "ln -sf ${plugin} $out/${spec.name}"
+        else
+          null
+      ) allPluginSpecs allResolvedPlugins;
       
-      # Create symlinks for multi-module plugins
-      expandedLinks = map (entry:
-        "ln -sf ${entry.plugin} $out/${entry.name}"
-      ) expandedPlugins;
+      # Create symlinks for extra plugins
+      extraLinks = lib.zipListsWith (spec: plugin:
+        if plugin != null then
+          "ln -sf ${plugin} $out/${spec.name}"
+        else
+          null
+      ) extraSpecs extraPlugins;
       
-      allLinks = regularLinks ++ expandedLinks;
+      # Filter out null entries and combine
+      validLinks = filter (link: link != null) (mainLinks ++ extraLinks);
     in
       pkgs.runCommand "lazyvim-dev-path" {} ''
         mkdir -p $out
-        ${lib.concatStringsSep "\n" allLinks}
+        ${lib.concatStringsSep "\n" validLinks}
       '';
 
   # Expand multi-module plugins and separate regular plugins
   pluginSeparation = expandMultiModulePlugins (pluginData.plugins or []);
   
-  # Build the list of regular vim plugins from nixpkgs
-  resolvedRegularPlugins = map (pluginSpec:
+  # Build the list of all plugins from plugins.json
+  allPluginSpecs = pluginData.plugins or [];
+  
+  # Resolve all plugins to their nixpkgs equivalents
+  resolvedPlugins = map (pluginSpec:
     let
       nixName = resolvePluginName pluginSpec.name;
       plugin = pkgs.vimPlugins.${nixName} or null;
@@ -127,13 +116,7 @@ let
         builtins.trace "Warning: Could not find plugin ${pluginSpec.name} (tried ${nixName})" null
       else
         plugin
-  ) pluginSeparation.regular;
-  
-  # Filter out null plugins
-  availableRegularPlugins = filter (p: p != null) resolvedRegularPlugins;
-  
-  # Multi-module plugins are already resolved in expandMultiModulePlugins
-  availableExpandedPlugins = pluginSeparation.expanded;
+  ) allPluginSpecs;
   
   # Resolve extra plugins from user configuration
   resolvedExtraPlugins = map (pluginSpec:
@@ -147,10 +130,8 @@ let
         plugin
   ) (cfg.extraPlugins or []);
   
-  availableExtraPlugins = filter (p: p != null) resolvedExtraPlugins;
-  
-  # Create the dev path with proper symlinks including extra plugins
-  devPath = createDevPath (availableRegularPlugins ++ availableExtraPlugins) availableExpandedPlugins;
+  # Create the dev path with proper symlinks
+  devPath = createDevPath allPluginSpecs resolvedPlugins (cfg.extraPlugins or []) resolvedExtraPlugins;
   
   # Generate lazy.nvim configuration
   lazyConfig = ''
@@ -175,7 +156,7 @@ let
       defaults = { lazy = true },
       dev = {
         path = "${devPath}",
-        patterns = { "" },
+        patterns = { "." },  -- Match all plugins in the dev path
         fallback = false,
       },
       spec = {

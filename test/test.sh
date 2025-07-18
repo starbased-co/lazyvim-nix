@@ -78,11 +78,11 @@ echo
 echo "4. Plugin Resolution Tests"
 echo "-------------------------"
 
-# Test some specific plugin mappings
+# Test some specific plugin mappings that require manual mapping
 test_plugins=(
-    "LazyVim/LazyVim:LazyVim"
-    "folke/tokyonight.nvim:tokyonight-nvim"
-    "nvim-telescope/telescope.nvim:telescope-nvim"
+    "L3MON4D3/LuaSnip:luasnip"
+    "catppuccin/nvim:catppuccin-nvim"
+    "echasnovski/mini.ai:mini-nvim"
     "neovim/nvim-lspconfig:nvim-lspconfig"
 )
 
@@ -98,6 +98,76 @@ for plugin_test in "${test_plugins[@]}"; do
     fi
     test_count=$((test_count + 1))
 done
+
+# Test multi-module plugin functionality
+echo
+echo "4b. Multi-Module Plugin Tests"
+echo "------------------------------"
+
+# Test that multi-module plugins are detected correctly
+run_test "multi-module plugin detection" "
+    nix-instantiate --eval --expr '
+        let
+            pkgs = import <nixpkgs> {};
+            lib = pkgs.lib;
+            pluginMappings = import $PROJECT_ROOT/plugin-mappings.nix;
+            detectMultiModulePlugins = pluginSpecs:
+                let
+                    isMultiModulePlugin = pluginSpec:
+                        let
+                            mapping = pluginMappings.\${pluginSpec.name} or null;
+                        in
+                            mapping != null && builtins.isAttrs mapping && mapping ? module;
+                in
+                    builtins.filter isMultiModulePlugin pluginSpecs;
+            testSpecs = [
+                { name = \"echasnovski/mini.ai\"; }
+                { name = \"echasnovski/mini.pairs\"; }
+                { name = \"folke/lazy.nvim\"; }
+            ];
+            result = detectMultiModulePlugins testSpecs;
+        in
+            builtins.length result == 2
+    ' 2>/dev/null
+"
+
+# Test that module names are extracted correctly
+run_test "module name extraction" "
+    nix-instantiate --eval --expr '
+        let
+            pluginMappings = import $PROJECT_ROOT/plugin-mappings.nix;
+            miniAiMapping = pluginMappings.\"echasnovski/mini.ai\";
+        in
+            miniAiMapping.module == \"mini.ai\" && miniAiMapping.package == \"mini-nvim\"
+    ' 2>/dev/null
+"
+
+# Test that snacks.nvim works with automatic resolution
+run_test "snacks.nvim automatic resolution" "
+    nix-instantiate --eval --expr '
+        let
+            pkgs = import <nixpkgs> {};
+            lib = pkgs.lib;
+            pluginMappings = import $PROJECT_ROOT/plugin-mappings.nix;
+            resolvePluginName = lazyName:
+                let
+                    mapping = pluginMappings.\${lazyName} or null;
+                in
+                    if mapping == null then
+                        let
+                            parts = lib.splitString \"/\" lazyName;
+                            repoName = if builtins.length parts == 2 then builtins.elemAt parts 1 else lazyName;
+                            nixName = lib.replaceStrings [\"-\" \".\"] [\"_\" \"-\"] repoName;
+                        in nixName
+                    else if builtins.isString mapping then
+                        mapping
+                    else
+                        mapping.package;
+            resolved = resolvePluginName \"snacks.nvim\";
+        in
+            resolved == \"snacks-nvim\" && builtins.hasAttr \"snacks-nvim\" pkgs.vimPlugins
+    ' 2>/dev/null
+"
 
 echo
 echo "5. Generated Configuration Tests"

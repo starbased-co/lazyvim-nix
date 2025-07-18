@@ -58,6 +58,9 @@
   "jay-babu/mason-nvim-dap.nvim" = "mason-nvim-dap";
   "williamboman/mason-lspconfig.nvim" = "mason-lspconfig-nvim";
   
+  # Snacks.nvim - Important: use the exact name LazyVim expects
+  "folke/snacks.nvim" = "snacks-nvim";
+  
   # Standard vim plugin names
   "dstein64/vim-startuptime" = "vim-startuptime";
   
