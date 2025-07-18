@@ -140,6 +140,22 @@ let
   # Create the dev path with proper symlinks
   devPath = createDevPath allPluginSpecs resolvedPlugins (cfg.extraPlugins or []) resolvedExtraPlugins;
   
+  # Extract repository name from plugin spec (needed for config generation)
+  getRepoName = specName:
+    let parts = lib.splitString "/" specName;
+    in if length parts == 2 then elemAt parts 1 else specName;
+  
+  # Generate dev plugin specs for available plugins
+  devPluginSpecs = lib.zipListsWith (spec: plugin:
+    if plugin != null then
+      ''{ "${getRepoName spec.name}", dev = true },''
+    else
+      null
+  ) allPluginSpecs resolvedPlugins;
+  
+  # Filter out null entries
+  availableDevSpecs = filter (s: s != null) devPluginSpecs;
+  
   # Generate lazy.nvim configuration
   lazyConfig = ''
     -- LazyVim Nix Configuration
@@ -163,7 +179,7 @@ let
       defaults = { lazy = true },
       dev = {
         path = "${devPath}",
-        patterns = { "." },  -- Match all plugins in the dev path
+        patterns = {},  -- Don't automatically match, use explicit dev = true
         fallback = false,
       },
       spec = {
@@ -180,6 +196,8 @@ let
           end,
           dev = true,
         },
+        -- Mark available plugins as dev = true
+        ${concatStringsSep "\n        " availableDevSpecs}
         -- User plugins
         { import = "plugins" },
       },
