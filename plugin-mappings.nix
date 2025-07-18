@@ -1,30 +1,77 @@
 # Mappings from LazyVim plugin names to nixpkgs vimPlugins names
 # This file handles the cases where automatic name resolution fails
+#
+# Automatic resolution converts plugin names as follows:
+#   1. Takes the repository name (after the /)
+#   2. Replaces hyphens (-) with underscores (_)
+#   3. Replaces dots (.) with hyphens (-)
+#
+# Examples of automatic resolution:
+#   "owner/plugin.nvim" -> "plugin-nvim"
+#   "owner/plugin-name" -> "plugin_name"
+#   "owner/plugin-name.nvim" -> "plugin_name-nvim"
+#
+# Multi-module plugin support:
+# Some plugins (like mini.nvim) provide multiple modules from a single package.
+# LazyVim treats each module as a separate plugin, but they all come from the same
+# nixpkgs package. Use this format for multi-module plugins:
+#
+#   "owner/plugin.module" = { package = "nixpkgs-name"; module = "module-name"; };
+#
+# This creates a symlink from "module-name" to "nixpkgs-name" in the dev path,
+# allowing LazyVim to find each module individually while using the same Nix package.
 
 {
-  # Core LazyVim plugins
-  "LazyVim/LazyVim" = "LazyVim";
-  "folke/lazy.nvim" = "lazy-nvim";
+  # Mini.nvim modules (multi-module plugin: single package with multiple modules)
+  "echasnovski/mini.ai" = { package = "mini-nvim"; module = "mini.ai"; };
+  "echasnovski/mini.bufremove" = { package = "mini-nvim"; module = "mini.bufremove"; };
+  "echasnovski/mini.comment" = { package = "mini-nvim"; module = "mini.comment"; };
+  "echasnovski/mini.indentscope" = { package = "mini-nvim"; module = "mini.indentscope"; };
+  "echasnovski/mini.pairs" = { package = "mini-nvim"; module = "mini.pairs"; };
+  "echasnovski/mini.surround" = { package = "mini-nvim"; module = "mini.surround"; };
   
-  # Folke's plugins (common pattern: plugin.nvim -> plugin-nvim)
-  "folke/tokyonight.nvim" = "tokyonight-nvim";
-  "folke/which-key.nvim" = "which-key-nvim";
-  "folke/trouble.nvim" = "trouble-nvim";
-  "folke/todo-comments.nvim" = "todo-comments-nvim";
+  # Plugins that don't follow standard naming conventions
+  "L3MON4D3/LuaSnip" = "luasnip";
+  "catppuccin/nvim" = "catppuccin-nvim";
+  "rose-pine/neovim" = "rose-pine";
+  "catppuccin" = "catppuccin-nvim";  # Alternative name sometimes used
+  "folke/ts-comments.nvim" = "ts-comments-nvim";
+  "MagicDuck/grug-far.nvim" = "grug-far-nvim";
+  "aktersnurra/no-clown-fiesta" = "no-clown-fiesta-nvim";
+  "swaits/zellij-nav.nvim" = "zellij-nav-nvim";
+  "jesseduffield/lazygit" = "lazygit-nvim";
+  "nvim-neo-tree/neo-tree.nvim" = "neo-tree-nvim";
+  "nvim-lualine/lualine.nvim" = "lualine-nvim";
+  "akinsho/bufferline.nvim" = "bufferline-nvim";
   "folke/noice.nvim" = "noice-nvim";
-  "folke/flash.nvim" = "flash-nvim";
-  "folke/neodev.nvim" = "neodev-nvim";
-  "folke/neoconf.nvim" = "neoconf-nvim";
-  "folke/persistence.nvim" = "persistence-nvim";
+  "MunifTanjim/nui.nvim" = "nui-nvim";
+  "rcarriga/nvim-notify" = "nvim-notify";
   
-  # Telescope ecosystem
-  "nvim-telescope/telescope.nvim" = "telescope-nvim";
+  # Plugins with uppercase letters that need special handling
+  "RRethy/vim-illuminate" = "vim-illuminate";
+  "JoosepAlviste/nvim-ts-context-commentstring" = "nvim-ts-context-commentstring";
+  
+  # Plugins where automatic hyphen-to-underscore conversion doesn't match nixpkgs
+  "folke/todo-comments.nvim" = "todo-comments-nvim";
+  "folke/which-key.nvim" = "which-key-nvim";
+  "lukas-reineke/indent-blankline.nvim" = "indent-blankline-nvim";
   "nvim-telescope/telescope-fzf-native.nvim" = "telescope-fzf-native-nvim";
+  "nvim-tree/nvim-web-devicons" = "nvim-web-devicons";
+  "simrat39/rust-tools.nvim" = "rust-tools-nvim";
+  "akinsho/flutter-tools.nvim" = "flutter-tools-nvim";
+  "jose-elias-alvarez/typescript.nvim" = "typescript-nvim";
+  "smjonas/inc-rename.nvim" = "inc-rename-nvim";
+  "jay-babu/mason-nvim-dap.nvim" = "mason-nvim-dap";
+  "williamboman/mason-lspconfig.nvim" = "mason-lspconfig-nvim";
   
-  # Treesitter
+  # Standard vim plugin names
+  "dstein64/vim-startuptime" = "vim-startuptime";
+  
+  # Treesitter ecosystem
   "nvim-treesitter/nvim-treesitter" = "nvim-treesitter";
   "nvim-treesitter/nvim-treesitter-textobjects" = "nvim-treesitter-textobjects";
   "nvim-treesitter/nvim-treesitter-context" = "nvim-treesitter-context";
+  "windwp/nvim-ts-autotag" = "nvim-ts-autotag";
   
   # LSP and completion
   "neovim/nvim-lspconfig" = "nvim-lspconfig";
@@ -32,84 +79,42 @@
   "hrsh7th/cmp-nvim-lsp" = "cmp-nvim-lsp";
   "hrsh7th/cmp-buffer" = "cmp-buffer";
   "hrsh7th/cmp-path" = "cmp-path";
-  "saadparwaiz1/cmp_luasnip" = "cmp_luasnip";
-  "L3MON4D3/LuaSnip" = "luasnip";
   "rafamadriz/friendly-snippets" = "friendly-snippets";
-  
-  # Mason (disabled in Nix, but mapping for completeness)
-  "williamboman/mason.nvim" = "mason-nvim";
-  "williamboman/mason-lspconfig.nvim" = "mason-lspconfig-nvim";
-  "jay-babu/mason-nvim-dap.nvim" = "mason-nvim-dap";
-  
-  # UI plugins
-  "nvim-lualine/lualine.nvim" = "lualine-nvim";
-  "akinsho/bufferline.nvim" = "bufferline-nvim";
-  "lukas-reineke/indent-blankline.nvim" = "indent-blankline-nvim";
-  "echasnovski/mini.indentscope" = { package = "mini-nvim"; module = "mini.indentscope"; };
-  "rcarriga/nvim-notify" = "nvim-notify";
-  "stevearc/dressing.nvim" = "dressing-nvim";
-  "akinsho/toggleterm.nvim" = "toggleterm-nvim";
-  
-  # File management
-  "nvim-neo-tree/neo-tree.nvim" = "neo-tree-nvim";
-  "nvim-tree/nvim-web-devicons" = "nvim-web-devicons";
-  "MunifTanjim/nui.nvim" = "nui-nvim";
-  
-  # Git
-  "lewis6991/gitsigns.nvim" = "gitsigns-nvim";
-  "sindrets/diffview.nvim" = "diffview-nvim";
-  "TimUntersberger/neogit" = "neogit";
-  "kdheepak/lazygit.nvim" = "lazygit-nvim";
-  
-  # Editing support
-  "echasnovski/mini.ai" = { package = "mini-nvim"; module = "mini.ai"; };
-  "echasnovski/mini.pairs" = { package = "mini-nvim"; module = "mini.pairs"; };
-  "echasnovski/mini.surround" = { package = "mini-nvim"; module = "mini.surround"; };
-  "echasnovski/mini.comment" = { package = "mini-nvim"; module = "mini.comment"; };
-  "echasnovski/mini.bufremove" = { package = "mini-nvim"; module = "mini.bufremove"; };
-  "JoosepAlviste/nvim-ts-context-commentstring" = "nvim-ts-context-commentstring";
-  
-  # Formatting and linting
-  "stevearc/conform.nvim" = "conform-nvim";
-  "mfussenegger/nvim-lint" = "nvim-lint";
   
   # DAP (Debug Adapter Protocol)
   "mfussenegger/nvim-dap" = "nvim-dap";
   "rcarriga/nvim-dap-ui" = "nvim-dap-ui";
   "theHamsta/nvim-dap-virtual-text" = "nvim-dap-virtual-text";
   
+  # UI plugins
+  "nvimdev/dashboard-nvim" = "dashboard-nvim";
+  "goolord/alpha-nvim" = "alpha-nvim";
+  
   # Testing
-  "nvim-neotest/neotest" = "neotest";
   "nvim-neotest/neotest-go" = "neotest-go";
   "nvim-neotest/neotest-python" = "neotest-python";
   "nvim-neotest/neotest-plenary" = "neotest-plenary";
   "nvim-neotest/neotest-vim-test" = "neotest-vim-test";
   
-  # Colorschemes
-  "catppuccin/nvim" = "catppuccin-nvim";
-  "rebelot/kanagawa.nvim" = "kanagawa-nvim";
-  "EdenEast/nightfox.nvim" = "nightfox-nvim";
-  "rose-pine/neovim" = "rose-pine";
+  # Blink completion  
+  "saghen/blink.cmp" = "blink-cmp";
   
-  # Dependencies
-  "nvim-lua/plenary.nvim" = "plenary-nvim";
+  # FZF integration
+  "ibhagwan/fzf-lua" = "fzf-lua";
   
-  # Language specific
-  "simrat39/rust-tools.nvim" = "rust-tools-nvim";
-  "akinsho/flutter-tools.nvim" = "flutter-tools-nvim";
-  "jose-elias-alvarez/typescript.nvim" = "typescript-nvim";
-  "b0o/SchemaStore.nvim" = "SchemaStore-nvim";
+  # LazyGit
+  "kdheepak/lazygit.nvim" = "lazygit-nvim";
   
-  # Misc
-  "dstein64/vim-startuptime" = "vim-startuptime";
+  # Mini icons (separate package)
+  "echasnovski/mini.icons" = "mini-icons";
+  
+  # Neoconf and Neodev
+  "folke/neoconf.nvim" = "neoconf-nvim";
+  "folke/neodev.nvim" = "neodev-nvim";
+  
+  # Miscellaneous
   "kevinhwang91/nvim-ufo" = "nvim-ufo";
   "kevinhwang91/promise-async" = "promise-async";
-  "Wansmer/treesj" = "treesj";
-  "cshuaimin/ssr.nvim" = "ssr-nvim";
-  "smjonas/inc-rename.nvim" = "inc-rename-nvim";
   "windwp/nvim-autopairs" = "nvim-autopairs";
-  "windwp/nvim-ts-autotag" = "nvim-ts-autotag";
-  "RRethy/vim-illuminate" = "vim-illuminate";
-  "nvimdev/dashboard-nvim" = "dashboard-nvim";
-  "goolord/alpha-nvim" = "alpha-nvim";
+  "mfussenegger/nvim-lint" = "nvim-lint";
 }

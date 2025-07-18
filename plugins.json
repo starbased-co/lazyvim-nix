@@ -1,6 +1,6 @@
 {
-  "version": "stable",
-  "generated": "2025-07-16 18:19:29",
+  "commit": "25abbf546d564dc484cf903804661ba12de45507",
+  "generated": "2025-07-17 20:46:45",
   "plugins": [
     {
       "config": [
@@ -169,15 +169,6 @@
     },
     {
       "config": [
-        "gitsigns.nvim"
-      ],
-      "loadOrder": 12,
-      "name": "gitsigns.nvim",
-      "dependencies": {
-      }
-    },
-    {
-      "config": [
         "folke/trouble.nvim"
       ],
       "loadOrder": 13,
@@ -242,10 +233,10 @@
     },
     {
       "config": [
-        "snacks.nvim"
+        "folke/snacks.nvim"
       ],
       "loadOrder": 21,
-      "name": "snacks.nvim",
+      "name": "folke/snacks.nvim",
       "dependencies": {
       }
     },
@@ -266,7 +257,178 @@
       "name": "nvim-lua/plenary.nvim",
       "dependencies": {
       }
+    },
+    {
+      "config": [
+        "nvim-neo-tree/neo-tree.nvim"
+      ],
+      "loadOrder": 24,
+      "name": "nvim-neo-tree/neo-tree.nvim",
+      "dependencies": {
+      }
+    },
+    {
+      "config": [
+        "nvim-lualine/lualine.nvim"
+      ],
+      "loadOrder": 25,
+      "name": "nvim-lualine/lualine.nvim",
+      "dependencies": {
+      }
+    },
+    {
+      "config": [
+        "akinsho/bufferline.nvim"
+      ],
+      "loadOrder": 26,
+      "name": "akinsho/bufferline.nvim",
+      "dependencies": {
+      }
+    },
+    {
+      "config": [
+        "folke/noice.nvim"
+      ],
+      "loadOrder": 27,
+      "name": "folke/noice.nvim",
+      "dependencies": {
+      }
+    },
+    {
+      "config": [
+        "MunifTanjim/nui.nvim"
+      ],
+      "loadOrder": 28,
+      "name": "MunifTanjim/nui.nvim",
+      "dependencies": {
+      }
+    },
+    {
+      "config": [
+        "rcarriga/nvim-notify"
+      ],
+      "loadOrder": 29,
+      "name": "rcarriga/nvim-notify",
+      "dependencies": {
+      }
+    },
+    {
+      "config": [
+        "nvim-tree/nvim-web-devicons"
+      ],
+      "loadOrder": 30,
+      "name": "nvim-tree/nvim-web-devicons",
+      "dependencies": {
+      }
+    },
+    {
+      "config": [
+        "saghen/blink.cmp"
+      ],
+      "loadOrder": 31,
+      "name": "saghen/blink.cmp",
+      "dependencies": {
+      }
+    },
+    {
+      "config": [
+        "rafamadriz/friendly-snippets"
+      ],
+      "loadOrder": 32,
+      "name": "rafamadriz/friendly-snippets",
+      "dependencies": {
+      }
+    },
+    {
+      "config": [
+        "ibhagwan/fzf-lua"
+      ],
+      "loadOrder": 33,
+      "name": "ibhagwan/fzf-lua",
+      "dependencies": {
+      }
+    },
+    {
+      "config": [
+        "neovim/nvim-lspconfig"
+      ],
+      "loadOrder": 34,
+      "name": "neovim/nvim-lspconfig",
+      "dependencies": {
+      }
+    },
+    {
+      "config": [
+        "echasnovski/mini.icons"
+      ],
+      "loadOrder": 35,
+      "name": "echasnovski/mini.icons",
+      "dependencies": {
+      }
+    },
+    {
+      "config": [
+        "kdheepak/lazygit.nvim"
+      ],
+      "loadOrder": 36,
+      "name": "kdheepak/lazygit.nvim",
+      "dependencies": {
+      }
+    },
+    {
+      "config": [
+        "nvimdev/dashboard-nvim"
+      ],
+      "loadOrder": 37,
+      "name": "nvimdev/dashboard-nvim",
+      "dependencies": {
+      }
+    },
+    {
+      "config": [
+        "RRethy/vim-illuminate"
+      ],
+      "loadOrder": 38,
+      "name": "RRethy/vim-illuminate",
+      "dependencies": {
+      }
+    },
+    {
+      "config": [
+        "dstein64/vim-startuptime"
+      ],
+      "loadOrder": 39,
+      "name": "dstein64/vim-startuptime",
+      "dependencies": {
+      }
+    },
+    {
+      "config": [
+        "nvim-treesitter/nvim-treesitter-context"
+      ],
+      "loadOrder": 40,
+      "name": "nvim-treesitter/nvim-treesitter-context",
+      "dependencies": {
+      }
+    },
+    {
+      "config": [
+        "folke/neoconf.nvim"
+      ],
+      "loadOrder": 41,
+      "name": "folke/neoconf.nvim",
+      "dependencies": {
+      }
+    },
+    {
+      "config": [
+        "folke/neodev.nvim"
+      ],
+      "loadOrder": 42,
+      "name": "folke/neodev.nvim",
+      "dependencies": {
+      }
     }
   ],
-  "commit": "25abbf546d564dc484cf903804661ba12de45507"
+  "version": "stable"
 }
