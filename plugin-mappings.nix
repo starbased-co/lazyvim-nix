@@ -39,7 +39,6 @@
   "MagicDuck/grug-far.nvim" = "grug-far-nvim";
   "aktersnurra/no-clown-fiesta" = "no-clown-fiesta-nvim";
   "swaits/zellij-nav.nvim" = "zellij-nav-nvim";
-  "jesseduffield/lazygit" = "lazygit-nvim";
   "nvim-neo-tree/neo-tree.nvim" = "neo-tree-nvim";
   "nvim-lualine/lualine.nvim" = "lualine-nvim";
   "akinsho/bufferline.nvim" = "bufferline-nvim";
