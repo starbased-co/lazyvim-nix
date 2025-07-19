@@ -15,7 +15,7 @@ This flake lets you use [LazyVim](https://www.lazyvim.org/) on NixOS with minima
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     home-manager.url = "github:nix-community/home-manager";
-    lazyvim.url = "github:your-username/lazyvim-nix";
+    lazyvim.url = "github:pfassina/lazyvim-nix";
   };
 
   outputs = { nixpkgs, home-manager, lazyvim, ... }: {
