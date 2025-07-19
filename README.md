@@ -1,6 +1,6 @@
 # lazyvim-nix
 
-A Nix flake for LazyVim that just works™
+A Nix flake for LazyVim that just works
 
 ## What is this?
 
