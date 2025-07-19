@@ -65,7 +65,6 @@ programs.lazyvim = {
 
 ### Customizing LazyVim
 
-```nix
 Configure LazyVim using the same directory structure as a standard LazyVim setup, but directly in your Nix configuration:
 
 ```nix
