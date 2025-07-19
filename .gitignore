@@ -28,3 +28,6 @@ Thumbs.db
 
 # Keep docs directory local only
 /docs/
+
+# Keep CLAUDE.md local only
+CLAUDE.md

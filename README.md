@@ -137,7 +137,8 @@ This flake:
 
 ## Acknowledgments
 
-This flake is heavily inspired by the setup from [@azuwis](https://github.com/azuwis). Thank you for the great foundation!
+- [LazyVim](https://github.com/LazyVim/LazyVim) by [@folke](https://github.com/folke) - The amazing Neovim configuration framework that this flake packages
+- This flake is heavily inspired by the setup from [@azuwis](https://github.com/azuwis). Thank you for the great foundation!
 
 ## License
 
