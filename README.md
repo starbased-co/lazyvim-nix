@@ -277,6 +277,10 @@ This flake:
 - **Treesitter parsers**: Managed via `treesitterParsers` option
 - **Plugin updates**: Happen through `nix flake update` instead of `:Lazy update`
 
+## Acknowledgments
+
+This flake is heavily inspired by the setup from [@azuwis](https://github.com/azuwis). Thank you for the great foundation!
+
 ## License
 
 MIT
