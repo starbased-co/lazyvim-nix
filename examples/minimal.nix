@@ -1,11 +1,8 @@
 # Minimal LazyVim configuration example
 # This shows the absolute minimum needed to get LazyVim running
-
-{ config, pkgs, ... }:
-
-{
+{...}: {
   # Import the LazyVim module
-  imports = [ 
+  imports = [
     # In a real flake, this would be:
     # inputs.lazyvim.homeManagerModules.default
     ../module.nix
@@ -16,3 +13,4 @@
     enable = true;
   };
 }
+

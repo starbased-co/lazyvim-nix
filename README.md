@@ -54,11 +54,11 @@ programs.lazyvim = {
   ];
   
   # Add treesitter parsers
-  treesitterParsers = [
-    "rust"
-    "go" 
-    "typescript"
-    "tsx"
+  treesitterParsers = with pkgs.tree-sitter-grammars; [
+    tree-sitter-rust
+    tree-sitter-go
+    tree-sitter-typescript
+    tree-sitter-tsx
   ];
 };
 ```
@@ -69,28 +69,88 @@ programs.lazyvim = {
 programs.lazyvim = {
   enable = true;
   
-  # LazyVim settings
-  settings = {
-    colorscheme = "catppuccin";
-    options = {
-      relativenumber = false;
-      tabstop = 2;
-    };
+  # LazyVim configuration structure
+  config = {
+    options = ''
+      vim.opt.relativenumber = false
+      vim.opt.tabstop = 2
+      vim.cmd.colorscheme("catppuccin")
+    '';
   };
   
-  # Add extra plugins
-  extraPlugins = [
-    {
-      name = "github/copilot.vim";
-      lazy = false;
-    }
-  ];
+  # Add plugins
+  plugins = {
+    copilot = ''
+      return {
+        "github/copilot.vim",
+        lazy = false,
+      }
+    '';
+  };
+};
+```
+
+### LazyVim Directory Structure Support
+
+Configure LazyVim using the same directory structure as a standard LazyVim setup, but directly in your Nix configuration:
+
+```nix
+programs.lazyvim = {
+  enable = true;
+
+  # Maps to lua/config/ directory
+  config = {
+    # Custom autocmds → lua/config/autocmds.lua
+    autocmds = ''
+      vim.api.nvim_create_autocmd("FocusLost", {
+        command = "silent! wa",
+      })
+    '';
+
+    # Custom keymaps → lua/config/keymaps.lua
+    keymaps = ''
+      vim.keymap.set("n", "<C-s>", "<cmd>w<cr>", { desc = "Save file" })
+    '';
+
+    # Custom options → lua/config/options.lua
+    options = ''
+      vim.opt.relativenumber = false
+      vim.opt.wrap = true
+    '';
+  };
+
+  # Maps to lua/plugins/ directory
+  plugins = {
+    # Each key becomes lua/plugins/{key}.lua
+    custom-theme = ''
+      return {
+        "folke/tokyonight.nvim",
+        opts = { style = "night", transparent = true },
+      }
+    '';
+    
+    lsp-config = ''
+      return {
+        "neovim/nvim-lspconfig",
+        opts = function(_, opts)
+          opts.servers.rust_analyzer = {
+            settings = {
+              ["rust-analyzer"] = {
+                checkOnSave = { command = "clippy" },
+              },
+            },
+          }
+          return opts
+        end,
+      }
+    '';
+  };
 };
 ```
 
 ### Using Your Own Plugin Configs
 
-Place your custom plugin configurations in `~/.config/nvim/lua/plugins/` as you would with a standard LazyVim setup:
+You can also place custom plugin configurations directly in `~/.config/nvim/lua/plugins/` as you would with a standard LazyVim setup:
 
 ```lua
 -- ~/.config/nvim/lua/plugins/my-config.lua
@@ -173,8 +233,32 @@ programs.lazyvim = {
     "yaml"
   ];
   
-  settings = {
-    colorscheme = "tokyonight";
+  config = {
+    options = ''
+      vim.opt.wrap = true
+      vim.opt.conceallevel = 0
+      vim.cmd.colorscheme("tokyonight")
+    '';
+    
+    keymaps = ''
+      vim.keymap.set("n", "<leader>gg", "<cmd>LazyGit<cr>", { desc = "LazyGit" })
+    '';
+  };
+  
+  plugins = {
+    rust-tools = ''
+      return {
+        "simrat39/rust-tools.nvim",
+        ft = "rust",
+        opts = {
+          server = {
+            on_attach = function(_, bufnr)
+              -- Custom rust-analyzer setup
+            end,
+          },
+        },
+      }
+    '';
   };
 };
 ```

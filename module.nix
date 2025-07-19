@@ -74,7 +74,7 @@ let
       };
 
   # Helper function to create dev path with proper symlinks for all plugins
-  createDevPath = allPluginSpecs: allResolvedPlugins: extraSpecs: extraPlugins:
+  createDevPath = allPluginSpecs: allResolvedPlugins:
     let
       # Extract repository name from plugin spec (e.g., "owner/repo.nvim" -> "repo.nvim")
       getRepoName = specName:
@@ -90,17 +90,8 @@ let
           null
       ) allPluginSpecs allResolvedPlugins;
       
-      # Create symlinks for extra plugins
-      extraLinks = lib.zipListsWith (spec: plugin:
-        if plugin != null then
-          let repoName = getRepoName spec.name;
-          in "ln -sf ${plugin} $out/${repoName}"
-        else
-          null
-      ) extraSpecs extraPlugins;
-      
-      # Filter out null entries and combine
-      validLinks = filter (link: link != null) (mainLinks ++ extraLinks);
+      # Filter out null entries
+      validLinks = filter (link: link != null) mainLinks;
     in
       pkgs.runCommand "lazyvim-dev-path" {} ''
         mkdir -p $out
@@ -125,20 +116,8 @@ let
         plugin
   ) allPluginSpecs;
   
-  # Resolve extra plugins from user configuration
-  resolvedExtraPlugins = map (pluginSpec:
-    let
-      nixName = resolvePluginName pluginSpec.name;
-      plugin = pkgs.vimPlugins.${nixName} or null;
-    in
-      if plugin == null then
-        builtins.trace "Warning: Could not find extra plugin ${pluginSpec.name} (tried ${nixName})" null
-      else
-        plugin
-  ) (cfg.extraPlugins or []);
-  
   # Create the dev path with proper symlinks
-  devPath = createDevPath allPluginSpecs resolvedPlugins (cfg.extraPlugins or []) resolvedExtraPlugins;
+  devPath = createDevPath allPluginSpecs resolvedPlugins;
   
   # Extract repository name from plugin spec (needed for config generation)
   getRepoName = specName:
@@ -217,27 +196,13 @@ let
       },
     })
     
-    -- Apply user settings
-    ${optionalString (cfg.settings != {}) ''
-      -- User settings
-      ${if cfg.settings ? colorscheme && cfg.settings.colorscheme != null then "vim.cmd.colorscheme('${cfg.settings.colorscheme}')" else ""}
-      ${optionalString (cfg.settings ? options) (
-        concatStringsSep "\n" (mapAttrsToList (name: value: 
-          "vim.opt.${name} = ${if isBool value then (if value then "true" else "false") else toString value}"
-        ) cfg.settings.options)
-      )}
-    ''}
   '';
   
-  # Treesitter configuration - exact same approach as your old implementation  
+  # Treesitter configuration - using packages directly
   treesitterGrammars = let
     parsers = pkgs.symlinkJoin {
       name = "treesitter-parsers";
-      paths = (pkgs.vimPlugins.nvim-treesitter.withPlugins (plugins: 
-        map (name: pkgs.tree-sitter-grammars."tree-sitter-${name}" or 
-          (builtins.trace "Warning: Treesitter parser '${name}' not found" null)
-        ) (filter (p: p != null) cfg.treesitterParsers)
-      )).dependencies;
+      paths = (pkgs.vimPlugins.nvim-treesitter.withPlugins (_: cfg.treesitterParsers)).dependencies;
     };
   in parsers;
 
@@ -262,55 +227,122 @@ in {
     };
     
     treesitterParsers = mkOption {
-      type = types.listOf types.str;
-      default = [ "lua" "vim" "vimdoc" "query" "markdown" "markdown_inline" ];
-      example = [ "rust" "go" "typescript" "tsx" "python" ];
+      type = types.listOf types.package;
+      default = with pkgs.tree-sitter-grammars; [ 
+        tree-sitter-lua 
+        tree-sitter-vim 
+        tree-sitter-vimdoc 
+        tree-sitter-query 
+        tree-sitter-markdown 
+        tree-sitter-markdown-inline 
+      ];
+      example = literalExpression ''
+        with pkgs.tree-sitter-grammars; [
+          tree-sitter-rust
+          tree-sitter-go
+          tree-sitter-typescript
+          tree-sitter-tsx
+          tree-sitter-python
+        ]
+      '';
       description = ''
-        List of Treesitter parsers to install.
-        Parser names should match those available in nixpkgs.
+        List of Treesitter parser packages to install.
+        These should be packages from pkgs.tree-sitter-grammars.
       '';
     };
     
-    settings = mkOption {
+    
+    config = mkOption {
       type = types.submodule {
         options = {
-          colorscheme = mkOption {
-            type = types.nullOr types.str;
-            default = null;
-            example = "catppuccin";
-            description = "The colorscheme to use";
+          autocmds = mkOption {
+            type = types.str;
+            default = "";
+            example = ''
+              -- Auto-save on focus loss
+              vim.api.nvim_create_autocmd("FocusLost", {
+                command = "silent! wa",
+              })
+            '';
+            description = ''
+              Lua code for autocmds that will be written to lua/config/autocmds.lua.
+              This file is loaded by LazyVim for user autocmd configurations.
+            '';
+          };
+          
+          keymaps = mkOption {
+            type = types.str;
+            default = "";
+            example = ''
+              -- Custom keymaps
+              vim.keymap.set("n", "<leader>w", "<cmd>w<cr>", { desc = "Save file" })
+              vim.keymap.set("n", "<C-h>", "<cmd>TmuxNavigateLeft<cr>", { desc = "Go to left window" })
+            '';
+            description = ''
+              Lua code for keymaps that will be written to lua/config/keymaps.lua.
+              This file is loaded by LazyVim for user keymap configurations.
+            '';
           };
           
           options = mkOption {
-            type = types.attrsOf types.anything;
-            default = {};
-            example = {
-              relativenumber = false;
-              tabstop = 2;
-              shiftwidth = 2;
-            };
-            description = "Vim options to set";
+            type = types.str;
+            default = "";
+            example = ''
+              -- Custom vim options
+              vim.opt.relativenumber = false
+              vim.opt.wrap = true
+              vim.opt.conceallevel = 0
+            '';
+            description = ''
+              Lua code for vim options that will be written to lua/config/options.lua.
+              This file is loaded by LazyVim for user option configurations.
+            '';
           };
         };
       };
       default = {};
-      description = "LazyVim settings";
+      description = ''
+        LazyVim configuration files. These map to the lua/config/ directory structure
+        and are loaded by LazyVim automatically.
+      '';
     };
     
-    extraPlugins = mkOption {
-      type = types.listOf types.attrs;
-      default = [];
+    plugins = mkOption {
+      type = types.attrsOf types.str;
+      default = {};
       example = literalExpression ''
-        [
-          {
-            name = "github/copilot.vim";
-            lazy = false;
-          }
-        ]
+        {
+          custom-theme = '''
+            return {
+              "folke/tokyonight.nvim",
+              opts = {
+                style = "night",
+                transparent = true,
+              },
+            }
+          ''';
+          
+          lsp-config = '''
+            return {
+              "neovim/nvim-lspconfig",
+              opts = function(_, opts)
+                opts.servers.rust_analyzer = {
+                  settings = {
+                    ["rust-analyzer"] = {
+                      checkOnSave = {
+                        command = "clippy",
+                      },
+                    },
+                  },
+                }
+              end,
+            }
+          ''';
+        }
       '';
       description = ''
-        Additional plugin specifications for lazy.nvim.
-        These will be added to the spec after LazyVim's default plugins.
+        Plugin configuration files. Each key becomes a file lua/plugins/{key}.lua 
+        with the corresponding Lua code. These files are automatically loaded by LazyVim.
       '';
     };
   };
@@ -350,33 +382,38 @@ in {
       # Link treesitter parsers - exact same approach as your old config
       "nvim/parser".source = "${treesitterGrammars}/parser";
       
-      # Add extra plugin configurations if provided
-      "nvim/lua/plugins/nix-extra.lua" = mkIf (cfg.extraPlugins != []) {
-        text = let
-          # Convert plugin specs to Lua format
-          pluginToLua = plugin: 
-            let
-              # For lazy.nvim, the first element should be the plugin name
-              name = plugin.name;
-              otherAttrs = lib.filterAttrs (n: v: n != "name" && v != null) plugin;
-              attrToLua = name: value:
-                if value == true then "${name} = true"
-                else if value == false then "${name} = false"
-                else if builtins.isString value then ''${name} = "${value}"''
-                else "${name} = ${toString value}";
-              luaAttrs = lib.concatStringsSep ", " (lib.mapAttrsToList attrToLua otherAttrs);
-            in
-              if luaAttrs == "" then ''"${name}"''
-              else ''{ "${name}", ${luaAttrs} }'';
-          pluginsLua = lib.concatMapStringsSep ",\n  " pluginToLua cfg.extraPlugins;
-        in ''
-          -- Extra plugins configured via Nix
-          return {
-            ${pluginsLua}
-          }
+      # LazyVim config files
+      "nvim/lua/config/autocmds.lua" = mkIf (cfg.config.autocmds != "") {
+        text = ''
+          -- User autocmds configured via Nix
+          ${cfg.config.autocmds}
         '';
       };
-    };
+      
+      "nvim/lua/config/keymaps.lua" = mkIf (cfg.config.keymaps != "") {
+        text = ''
+          -- User keymaps configured via Nix
+          ${cfg.config.keymaps}
+        '';
+      };
+      
+      "nvim/lua/config/options.lua" = mkIf (cfg.config.options != "") {
+        text = ''
+          -- User options configured via Nix
+          ${cfg.config.options}
+        '';
+      };
+      
+    } 
+    # Generate plugin configuration files
+    // (lib.mapAttrs' (name: content: 
+      lib.nameValuePair "nvim/lua/plugins/${name}.lua" {
+        text = ''
+          -- Plugin configuration for ${name} (configured via Nix)
+          ${content}
+        '';
+      }
+    ) cfg.plugins);
     
     # Set up environment
     home.sessionVariables = {

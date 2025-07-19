@@ -32,6 +32,7 @@
   
   # Plugins that don't follow standard naming conventions
   "L3MON4D3/LuaSnip" = "luasnip";
+  "catppuccin/nvim" = "catppuccin-nvim";
   "folke/ts-comments.nvim" = "ts-comments-nvim";
   "MagicDuck/grug-far.nvim" = "grug-far-nvim";
   "nvim-neo-tree/neo-tree.nvim" = "neo-tree-nvim";
