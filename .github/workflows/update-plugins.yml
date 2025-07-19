@@ -30,10 +30,6 @@ jobs:
         with:
           name: nix-community
           
-      - name: Install dependencies
-        run: |
-          nix-env -iA nixpkgs.neovim nixpkgs.git nixpkgs.jq nixpkgs.ripgrep
-          
       - name: Check for LazyVim updates
         id: check-updates
         run: |
@@ -63,7 +59,7 @@ jobs:
       - name: Update plugins
         if: steps.check-updates.outputs.update_needed == 'true'
         run: |
-          ./scripts/update-plugins.sh
+          nix develop --command ./scripts/update-plugins.sh
           
       - name: Create Pull Request
         if: steps.check-updates.outputs.update_needed == 'true'
