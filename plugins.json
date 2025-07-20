@@ -1,416 +1,376 @@
 {
+  "version": "stable",
   "commit": "25abbf546d564dc484cf903804661ba12de45507",
-  "generated": "2025-07-17 20:46:45",
+  "generated": "2025-07-20 11:24:43",
+  "extraction_report": {
+    "total_plugins": 43,
+    "mapped_plugins": 43,
+    "unmapped_plugins": 0,
+    "multi_module_plugins": 2,
+    "mapping_suggestions": {
+    }
+  },
   "plugins": [
     {
-      "config": [
-        "LazyVim/LazyVim",
-        [
-          "echasnovski/mini.pairs"
-        ],
-        [
-          "folke/ts-comments.nvim"
-        ],
-        [
-          "echasnovski/mini.ai"
-        ],
-        [
-          "folke/lazydev.nvim"
-        ],
-        [
-          "folke/tokyonight.nvim"
-        ],
-        [
-          "catppuccin/nvim"
-        ],
-        [
-          "MagicDuck/grug-far.nvim"
-        ],
-        [
-          "folke/flash.nvim"
-        ],
-        [
-          "folke/which-key.nvim"
-        ],
-        [
-          "lewis6991/gitsigns.nvim"
-        ],
-        [
-          "gitsigns.nvim"
-        ],
-        [
-          "folke/trouble.nvim"
-        ],
-        [
-          "folke/todo-comments.nvim"
-        ],
-        [
-          "stevearc/conform.nvim"
-        ],
-        [
-          "mfussenegger/nvim-lint"
-        ],
-        [
-          "folke/which-key.nvim"
-        ],
-        [
-          "nvim-treesitter/nvim-treesitter"
-        ],
-        [
-          "nvim-treesitter/nvim-treesitter-textobjects"
-        ],
-        [
-          "windwp/nvim-ts-autotag"
-        ],
-        [
-          "snacks.nvim"
-        ],
-        [
-          "folke/persistence.nvim"
-        ],
-        [
-          "nvim-lua/plenary.nvim"
-        ]
-      ],
-      "loadOrder": 0,
       "name": "LazyVim/LazyVim",
+      "loadOrder": 1,
       "dependencies": {
-      }
+      },
+      "source_file": "table_spec",
+      "lazy": false,
+      "priority": 10000
     },
     {
-      "config": [
-        "echasnovski/mini.pairs"
-      ],
-      "loadOrder": 2,
-      "name": "echasnovski/mini.pairs",
-      "dependencies": {
-      }
-    },
-    {
-      "config": [
-        "folke/ts-comments.nvim"
-      ],
-      "loadOrder": 3,
-      "name": "folke/ts-comments.nvim",
-      "dependencies": {
-      }
-    },
-    {
-      "config": [
-        "echasnovski/mini.ai"
-      ],
-      "loadOrder": 4,
-      "name": "echasnovski/mini.ai",
-      "dependencies": {
-      }
-    },
-    {
-      "config": [
-        "folke/lazydev.nvim"
-      ],
-      "loadOrder": 5,
-      "name": "folke/lazydev.nvim",
-      "dependencies": {
-      }
-    },
-    {
-      "config": [
-        "MagicDuck/grug-far.nvim"
-      ],
-      "loadOrder": 8,
       "name": "MagicDuck/grug-far.nvim",
+      "loadOrder": 2,
       "dependencies": {
-      }
+      },
+      "source_file": "table_spec",
+      "cmd": "GrugFar"
     },
     {
-      "config": [
-        "folke/flash.nvim"
-      ],
+      "name": "MunifTanjim/nui.nvim",
+      "loadOrder": 3,
+      "dependencies": {
+      },
+      "source_file": "table_spec",
+      "lazy": true
+    },
+    {
+      "name": "RRethy/vim-illuminate",
+      "loadOrder": 4,
+      "dependencies": {
+      },
+      "source_file": "extra"
+    },
+    {
+      "name": "akinsho/bufferline.nvim",
+      "loadOrder": 5,
+      "dependencies": {
+      },
+      "source_file": "table_spec",
+      "event": "VeryLazy"
+    },
+    {
+      "name": "catppuccin/nvim",
+      "loadOrder": 6,
+      "dependencies": {
+      },
+      "source_file": "table_spec",
+      "lazy": true
+    },
+    {
+      "name": "dstein64/vim-startuptime",
+      "loadOrder": 7,
+      "dependencies": {
+      },
+      "source_file": "extra"
+    },
+    {
+      "name": "echasnovski/mini.ai",
+      "loadOrder": 8,
+      "dependencies": {
+      },
+      "multiModule": {
+        "basePackage": "mini-nvim",
+        "module": "mini.ai",
+        "repository": "echasnovski/mini.nvim"
+      },
+      "source_file": "table_spec",
+      "event": "VeryLazy"
+    },
+    {
+      "name": "echasnovski/mini.icons",
       "loadOrder": 9,
-      "name": "folke/flash.nvim",
       "dependencies": {
-      }
+      },
+      "source_file": "table_spec",
+      "lazy": true
     },
     {
-      "config": [
-        "folke/which-key.nvim"
-      ],
+      "name": "echasnovski/mini.pairs",
       "loadOrder": 10,
-      "name": "folke/which-key.nvim",
       "dependencies": {
-      }
+      },
+      "multiModule": {
+        "basePackage": "mini-nvim",
+        "module": "mini.pairs",
+        "repository": "echasnovski/mini.nvim"
+      },
+      "source_file": "table_spec",
+      "event": "VeryLazy"
     },
     {
-      "config": [
-        "lewis6991/gitsigns.nvim"
-      ],
+      "name": "folke/flash.nvim",
       "loadOrder": 11,
-      "name": "lewis6991/gitsigns.nvim",
       "dependencies": {
-      }
+      },
+      "source_file": "table_spec",
+      "event": "VeryLazy"
     },
     {
-      "config": [
-        "folke/trouble.nvim"
-      ],
+      "name": "folke/lazy.nvim",
+      "loadOrder": 12,
+      "dependencies": {
+      },
+      "source_file": "table_spec"
+    },
+    {
+      "name": "folke/lazydev.nvim",
       "loadOrder": 13,
-      "name": "folke/trouble.nvim",
       "dependencies": {
-      }
+      },
+      "source_file": "table_spec",
+      "cmd": "LazyDev",
+      "ft": "lua"
     },
     {
-      "config": [
-        "folke/todo-comments.nvim"
-      ],
+      "name": "folke/neoconf.nvim",
       "loadOrder": 14,
-      "name": "folke/todo-comments.nvim",
       "dependencies": {
-      }
+      },
+      "source_file": "extra"
     },
     {
-      "config": [
-        "stevearc/conform.nvim"
-      ],
+      "name": "folke/neodev.nvim",
       "loadOrder": 15,
-      "name": "stevearc/conform.nvim",
-      "dependencies": [
-        "mason.nvim"
+      "dependencies": {
+      },
+      "source_file": "extra"
+    },
+    {
+      "name": "folke/noice.nvim",
+      "loadOrder": 16,
+      "dependencies": {
+      },
+      "source_file": "table_spec",
+      "event": "VeryLazy"
+    },
+    {
+      "name": "folke/persistence.nvim",
+      "loadOrder": 17,
+      "dependencies": {
+      },
+      "source_file": "table_spec",
+      "event": "BufReadPre"
+    },
+    {
+      "name": "folke/snacks.nvim",
+      "loadOrder": 18,
+      "dependencies": {
+      },
+      "source_file": "table_spec",
+      "lazy": false,
+      "priority": 1000
+    },
+    {
+      "name": "folke/todo-comments.nvim",
+      "loadOrder": 19,
+      "dependencies": {
+      },
+      "source_file": "table_spec",
+      "event": "LazyFile",
+      "cmd": [
+        "TodoTrouble",
+        "TodoTelescope"
       ]
     },
     {
-      "config": [
-        "mfussenegger/nvim-lint"
-      ],
-      "loadOrder": 16,
-      "name": "mfussenegger/nvim-lint",
-      "dependencies": {
-      }
-    },
-    {
-      "config": [
-        "nvim-treesitter/nvim-treesitter"
-      ],
-      "loadOrder": 18,
-      "name": "nvim-treesitter/nvim-treesitter",
-      "dependencies": {
-      }
-    },
-    {
-      "config": [
-        "nvim-treesitter/nvim-treesitter-textobjects"
-      ],
-      "loadOrder": 19,
-      "name": "nvim-treesitter/nvim-treesitter-textobjects",
-      "dependencies": {
-      }
-    },
-    {
-      "config": [
-        "windwp/nvim-ts-autotag"
-      ],
+      "name": "folke/tokyonight.nvim",
       "loadOrder": 20,
-      "name": "windwp/nvim-ts-autotag",
       "dependencies": {
-      }
+      },
+      "source_file": "table_spec",
+      "lazy": true
     },
     {
-      "config": [
-        "folke/snacks.nvim"
-      ],
+      "name": "folke/trouble.nvim",
       "loadOrder": 21,
-      "name": "folke/snacks.nvim",
       "dependencies": {
-      }
+      },
+      "source_file": "table_spec",
+      "cmd": [
+        "Trouble"
+      ]
     },
     {
-      "config": [
-        "folke/persistence.nvim"
-      ],
+      "name": "folke/ts-comments.nvim",
       "loadOrder": 22,
-      "name": "folke/persistence.nvim",
       "dependencies": {
-      }
+      },
+      "source_file": "table_spec",
+      "event": "VeryLazy"
     },
     {
-      "config": [
-        "nvim-lua/plenary.nvim"
-      ],
+      "name": "folke/which-key.nvim",
       "loadOrder": 23,
-      "name": "nvim-lua/plenary.nvim",
       "dependencies": {
-      }
+      },
+      "source_file": "table_spec",
+      "event": "VeryLazy"
     },
     {
-      "config": [
-        "nvim-neo-tree/neo-tree.nvim"
-      ],
-      "loadOrder": 24,
-      "name": "nvim-neo-tree/neo-tree.nvim",
-      "dependencies": {
-      }
-    },
-    {
-      "config": [
-        "nvim-lualine/lualine.nvim"
-      ],
-      "loadOrder": 25,
-      "name": "nvim-lualine/lualine.nvim",
-      "dependencies": {
-      }
-    },
-    {
-      "config": [
-        "akinsho/bufferline.nvim"
-      ],
-      "loadOrder": 26,
-      "name": "akinsho/bufferline.nvim",
-      "dependencies": {
-      }
-    },
-    {
-      "config": [
-        "folke/noice.nvim"
-      ],
-      "loadOrder": 27,
-      "name": "folke/noice.nvim",
-      "dependencies": {
-      }
-    },
-    {
-      "config": [
-        "MunifTanjim/nui.nvim"
-      ],
-      "loadOrder": 28,
-      "name": "MunifTanjim/nui.nvim",
-      "dependencies": {
-      }
-    },
-    {
-      "config": [
-        "rcarriga/nvim-notify"
-      ],
-      "loadOrder": 29,
-      "name": "rcarriga/nvim-notify",
-      "dependencies": {
-      }
-    },
-    {
-      "config": [
-        "nvim-tree/nvim-web-devicons"
-      ],
-      "loadOrder": 30,
-      "name": "nvim-tree/nvim-web-devicons",
-      "dependencies": {
-      }
-    },
-    {
-      "config": [
-        "saghen/blink.cmp"
-      ],
-      "loadOrder": 31,
-      "name": "saghen/blink.cmp",
-      "dependencies": {
-      }
-    },
-    {
-      "config": [
-        "rafamadriz/friendly-snippets"
-      ],
-      "loadOrder": 32,
-      "name": "rafamadriz/friendly-snippets",
-      "dependencies": {
-      }
-    },
-    {
-      "config": [
-        "ibhagwan/fzf-lua"
-      ],
-      "loadOrder": 33,
       "name": "ibhagwan/fzf-lua",
+      "loadOrder": 24,
       "dependencies": {
-      }
+      },
+      "source_file": "extra"
     },
     {
-      "config": [
-        "neovim/nvim-lspconfig"
-      ],
-      "loadOrder": 34,
-      "name": "neovim/nvim-lspconfig",
-      "dependencies": {
-      }
-    },
-    {
-      "config": [
-        "echasnovski/mini.icons"
-      ],
-      "loadOrder": 35,
-      "name": "echasnovski/mini.icons",
-      "dependencies": {
-      }
-    },
-    {
-      "config": [
-        "kdheepak/lazygit.nvim"
-      ],
-      "loadOrder": 36,
       "name": "kdheepak/lazygit.nvim",
+      "loadOrder": 25,
       "dependencies": {
-      }
+      },
+      "source_file": "extra"
     },
     {
-      "config": [
-        "nvimdev/dashboard-nvim"
-      ],
-      "loadOrder": 37,
-      "name": "nvimdev/dashboard-nvim",
+      "name": "lewis6991/gitsigns.nvim",
+      "loadOrder": 26,
       "dependencies": {
-      }
+      },
+      "source_file": "table_spec",
+      "event": "LazyFile"
     },
     {
-      "config": [
-        "RRethy/vim-illuminate"
-      ],
-      "loadOrder": 38,
-      "name": "RRethy/vim-illuminate",
+      "name": "mason-org/mason-lspconfig.nvim",
+      "loadOrder": 27,
       "dependencies": {
-      }
+      },
+      "source_file": "table_spec"
     },
     {
-      "config": [
-        "dstein64/vim-startuptime"
-      ],
-      "loadOrder": 39,
-      "name": "dstein64/vim-startuptime",
+      "name": "mason-org/mason.nvim",
+      "loadOrder": 28,
       "dependencies": {
-      }
+      },
+      "source_file": "string_spec"
     },
     {
-      "config": [
-        "nvim-treesitter/nvim-treesitter-context"
+      "name": "mfussenegger/nvim-lint",
+      "loadOrder": 29,
+      "dependencies": {
+      },
+      "source_file": "table_spec",
+      "event": "LazyFile"
+    },
+    {
+      "name": "neovim/nvim-lspconfig",
+      "loadOrder": 30,
+      "dependencies": [
+        "mason-org/mason.nvim",
+        "mason-org/mason-lspconfig.nvim"
       ],
-      "loadOrder": 40,
+      "source_file": "table_spec",
+      "event": "LazyFile"
+    },
+    {
+      "name": "nvim-lua/plenary.nvim",
+      "loadOrder": 31,
+      "dependencies": {
+      },
+      "source_file": "table_spec",
+      "lazy": true
+    },
+    {
+      "name": "nvim-lualine/lualine.nvim",
+      "loadOrder": 32,
+      "dependencies": {
+      },
+      "source_file": "table_spec",
+      "event": "VeryLazy"
+    },
+    {
+      "name": "nvim-neo-tree/neo-tree.nvim",
+      "loadOrder": 33,
+      "dependencies": {
+      },
+      "source_file": "extra"
+    },
+    {
+      "name": "nvim-tree/nvim-web-devicons",
+      "loadOrder": 34,
+      "dependencies": {
+      },
+      "source_file": "extra"
+    },
+    {
+      "name": "nvim-treesitter/nvim-treesitter",
+      "loadOrder": 35,
+      "dependencies": {
+      },
+      "source_file": "table_spec",
+      "event": [
+        "LazyFile",
+        "VeryLazy"
+      ],
+      "cmd": [
+        "TSUpdateSync",
+        "TSUpdate",
+        "TSInstall"
+      ],
+      "lazy": true
+    },
+    {
       "name": "nvim-treesitter/nvim-treesitter-context",
+      "loadOrder": 36,
       "dependencies": {
-      }
+      },
+      "source_file": "extra"
     },
     {
-      "config": [
-        "folke/neoconf.nvim"
-      ],
+      "name": "nvim-treesitter/nvim-treesitter-textobjects",
+      "loadOrder": 37,
+      "dependencies": {
+      },
+      "source_file": "table_spec",
+      "event": "VeryLazy",
+      "enabled": true
+    },
+    {
+      "name": "nvimdev/dashboard-nvim",
+      "loadOrder": 38,
+      "dependencies": {
+      },
+      "source_file": "extra"
+    },
+    {
+      "name": "rafamadriz/friendly-snippets",
+      "loadOrder": 39,
+      "dependencies": {
+      },
+      "source_file": "extra"
+    },
+    {
+      "name": "rcarriga/nvim-notify",
+      "loadOrder": 40,
+      "dependencies": {
+      },
+      "source_file": "extra"
+    },
+    {
+      "name": "saghen/blink.cmp",
       "loadOrder": 41,
-      "name": "folke/neoconf.nvim",
       "dependencies": {
-      }
+      },
+      "source_file": "extra"
     },
     {
-      "config": [
-        "folke/neodev.nvim"
-      ],
+      "name": "stevearc/conform.nvim",
       "loadOrder": 42,
-      "name": "folke/neodev.nvim",
+      "dependencies": [
+        "mason-org/mason.nvim"
+      ],
+      "source_file": "table_spec",
+      "cmd": "ConformInfo",
+      "lazy": true
+    },
+    {
+      "name": "windwp/nvim-ts-autotag",
+      "loadOrder": 43,
       "dependencies": {
-      }
+      },
+      "source_file": "table_spec",
+      "event": "LazyFile"
     }
-  ],
-  "version": "stable"
+  ]
 }

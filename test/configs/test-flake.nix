@@ -176,9 +176,10 @@
           { buildInputs = [ pkgs.bash pkgs.git pkgs.neovim pkgs.jq ]; } ''
           echo "Testing update script..."
           
-          # Copy the script to a writable location
+          # Copy the scripts to a writable location
           cp ${./scripts/update-plugins.sh} update-plugins.sh
-          cp ${./scripts/parse-plugins.lua} parse-plugins.lua
+          cp ${./scripts/extract-plugins.lua} extract-plugins.lua
+          cp ${./scripts/suggest-mappings.lua} suggest-mappings.lua
           chmod +x update-plugins.sh
           
           # Test that the script can parse our current plugins.json

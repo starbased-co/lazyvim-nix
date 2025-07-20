@@ -205,7 +205,8 @@ echo "6. Update Script Tests"
 echo "--------------------"
 
 run_test "update script is executable" "[ -x '$PROJECT_ROOT/scripts/update-plugins.sh' ]"
-run_test "parse script exists" "[ -f '$PROJECT_ROOT/scripts/parse-plugins.lua' ]"
+run_test "extract script exists" "[ -f '$PROJECT_ROOT/scripts/extract-plugins.lua' ]"
+run_test "suggest mappings script exists" "[ -f '$PROJECT_ROOT/scripts/suggest-mappings.lua' ]"
 
 # Test that the script doesn't crash on dry run
 if command -v nvim >/dev/null 2>&1; then

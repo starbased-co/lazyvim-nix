@@ -46,6 +46,9 @@
   "RRethy/vim-illuminate" = "vim-illuminate";
   "JoosepAlviste/nvim-ts-context-commentstring" = "nvim-ts-context-commentstring";
   
+  # LazyVim core
+  "LazyVim/LazyVim" = "LazyVim";
+  
   # Plugins where automatic hyphen-to-underscore conversion doesn't match nixpkgs
   "folke/todo-comments.nvim" = "todo-comments-nvim";
   "folke/which-key.nvim" = "which-key-nvim";
@@ -58,9 +61,23 @@
   "smjonas/inc-rename.nvim" = "inc-rename-nvim";
   "jay-babu/mason-nvim-dap.nvim" = "mason-nvim-dap";
   "williamboman/mason-lspconfig.nvim" = "mason-lspconfig-nvim";
+  "stevearc/conform.nvim" = "conform-nvim";
+  "mason-org/mason.nvim" = "mason-nvim";
+  "mason-org/mason-lspconfig.nvim" = "mason-lspconfig-nvim";
+  
+  # Folke's plugins
+  "folke/lazy.nvim" = "lazy-nvim";
+  "folke/lazydev.nvim" = "lazydev-nvim";
+  "folke/tokyonight.nvim" = "tokyonight-nvim";
+  "folke/flash.nvim" = "flash-nvim";
+  "folke/trouble.nvim" = "trouble-nvim";
+  "folke/persistence.nvim" = "persistence-nvim";
   
   # Snacks.nvim - Important: use the exact name LazyVim expects
   "folke/snacks.nvim" = "snacks-nvim";
+  
+  # Git plugins
+  "lewis6991/gitsigns.nvim" = "gitsigns-nvim";
   
   # Standard vim plugin names
   "dstein64/vim-startuptime" = "vim-startuptime";
@@ -109,6 +126,9 @@
   # Neoconf and Neodev
   "folke/neoconf.nvim" = "neoconf-nvim";
   "folke/neodev.nvim" = "neodev-nvim";
+  
+  # Core dependencies
+  "nvim-lua/plenary.nvim" = "plenary-nvim";
   
   # Miscellaneous
   "kevinhwang91/nvim-ufo" = "nvim-ufo";
