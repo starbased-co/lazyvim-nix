@@ -23,12 +23,17 @@
 
 {
   # Mini.nvim modules (multi-module plugin: single package with multiple modules)
-  "echasnovski/mini.ai" = { package = "mini-nvim"; module = "mini.ai"; };
-  "echasnovski/mini.bufremove" = { package = "mini-nvim"; module = "mini.bufremove"; };
-  "echasnovski/mini.comment" = { package = "mini-nvim"; module = "mini.comment"; };
-  "echasnovski/mini.indentscope" = { package = "mini-nvim"; module = "mini.indentscope"; };
-  "echasnovski/mini.pairs" = { package = "mini-nvim"; module = "mini.pairs"; };
-  "echasnovski/mini.surround" = { package = "mini-nvim"; module = "mini.surround"; };
+  # LazyVim 15.x uses nvim-mini organization (renamed from echasnovski)
+  "nvim-mini/mini.ai" = { package = "mini-nvim"; module = "mini.ai"; };
+  "nvim-mini/mini.bufremove" = { package = "mini-nvim"; module = "mini.bufremove"; };
+  "nvim-mini/mini.comment" = { package = "mini-nvim"; module = "mini.comment"; };
+  "nvim-mini/mini.icons" = { package = "mini-nvim"; module = "mini.icons"; };
+  "nvim-mini/mini.indentscope" = { package = "mini-nvim"; module = "mini.indentscope"; };
+  "nvim-mini/mini.pairs" = { package = "mini-nvim"; module = "mini.pairs"; };
+  "nvim-mini/mini.surround" = { package = "mini-nvim"; module = "mini.surround"; };
+  
+  # Some extras still use the old echasnovski name
+  "echasnovski/mini.icons" = { package = "mini-nvim"; module = "mini.icons"; };
   
   # Plugins that don't follow standard naming conventions
   "L3MON4D3/LuaSnip" = "luasnip";
@@ -120,8 +125,6 @@
   # LazyGit
   "kdheepak/lazygit.nvim" = "lazygit-nvim";
   
-  # Mini icons (separate package)
-  "echasnovski/mini.icons" = "mini-icons";
   
   # Neoconf and Neodev
   "folke/neoconf.nvim" = "neoconf-nvim";
