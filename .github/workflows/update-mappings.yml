@@ -11,6 +11,11 @@ on:
   issue_comment:
     types: [created]
 
+permissions:
+  contents: write
+  pull-requests: write
+  issues: read
+
 jobs:
   update-mappings:
     # Only run on workflow_dispatch or when a maintainer comments "/update-mappings"

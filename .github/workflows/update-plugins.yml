@@ -14,6 +14,10 @@ on:
       - 'scripts/suggest-mappings.lua'
       - '.github/workflows/update-plugins.yml'
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   update-plugins:
     runs-on: ubuntu-latest
@@ -151,4 +155,4 @@ jobs:
           nix build .#default
           
           # Test the home-manager module evaluation
-          nix eval .#homeManagerModules.default --apply 'module: if builtins.isAttrs module then "Module loads successfully" else "Failed to load module"'
+          nix eval .#homeManagerModules.default --apply 'module: if (builtins.typeOf module) == "path" then "Module loads successfully" else "Failed to load module"'
