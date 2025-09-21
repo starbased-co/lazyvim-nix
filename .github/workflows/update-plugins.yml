@@ -72,6 +72,15 @@ jobs:
           UNMAPPED_COUNT=$(jq '.extraction_report.unmapped_plugins // 0' plugins.json)
           echo "unmapped_count=$UNMAPPED_COUNT" >> $GITHUB_OUTPUT
           
+          # Extract plugin statistics for PR body
+          TOTAL_PLUGINS=$(jq '.extraction_report.total_plugins // 0' plugins.json)
+          MAPPED_PLUGINS=$(jq '.extraction_report.mapped_plugins // 0' plugins.json)
+          MULTI_MODULE_PLUGINS=$(jq '.extraction_report.multi_module_plugins // 0' plugins.json)
+          
+          echo "total_plugins=$TOTAL_PLUGINS" >> $GITHUB_OUTPUT
+          echo "mapped_plugins=$MAPPED_PLUGINS" >> $GITHUB_OUTPUT
+          echo "multi_module_plugins=$MULTI_MODULE_PLUGINS" >> $GITHUB_OUTPUT
+          
           # If unmapped plugins exist, extract mapping suggestions
           if [ "$UNMAPPED_COUNT" -gt 0 ] && [ -f mapping-analysis-report.md ]; then
             # Extract verified mappings from the report
@@ -113,10 +122,10 @@ jobs:
             ${{ steps.update-plugins.outputs.unmapped_count > 0 && steps.update-plugins.outputs.has_verified_mappings != 'true' && '- ⚠️ Found unmapped plugins that need manual review (see mapping-analysis-report.md)' || '' }}
             
             ## Plugin Statistics
-            - Total plugins: $(jq '.extraction_report.total_plugins // 0' plugins.json || echo "N/A")
-            - Mapped plugins: $(jq '.extraction_report.mapped_plugins // 0' plugins.json || echo "N/A")
+            - Total plugins: ${{ steps.update-plugins.outputs.total_plugins || 'N/A' }}
+            - Mapped plugins: ${{ steps.update-plugins.outputs.mapped_plugins || 'N/A' }}
             - Unmapped plugins: ${{ steps.update-plugins.outputs.unmapped_count || 0 }}
-            - Multi-module plugins: $(jq '.extraction_report.multi_module_plugins // 0' plugins.json || echo "N/A")
+            - Multi-module plugins: ${{ steps.update-plugins.outputs.multi_module_plugins || 'N/A' }}
             
             ## Checklist
             - [ ] Review plugin changes
