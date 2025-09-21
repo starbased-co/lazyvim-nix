@@ -105,6 +105,11 @@ jobs:
             fi
           fi
           
+          # Stage the mapping analysis report if it exists
+          if [ -f mapping-analysis-report.md ]; then
+            git add mapping-analysis-report.md
+          fi
+          
       - name: Create Pull Request
         if: steps.check-updates.outputs.update_needed == 'true'
         uses: peter-evans/create-pull-request@v5
@@ -139,7 +144,6 @@ jobs:
           add-paths: |
             plugins.json
             plugin-mappings.nix
-            mapping-analysis-report.md
           
   test-flake:
     runs-on: ubuntu-latest
