@@ -54,11 +54,11 @@ programs.lazyvim = {
     tree-sitter-python
   ];
 
-  # Language servers, formatters, linters (since Mason is disabled)
+  # LSP servers and tools
   extraPackages = with pkgs; [
-    nixd       # Nix LSP
-    pyright    # Python LSP
-    alejandra  # Nix formatter
+    nixd
+    pyright
+    alejandra
   ];
 };
 ```
