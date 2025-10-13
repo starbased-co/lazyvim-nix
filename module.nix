@@ -451,10 +451,27 @@ let
             -- 2. Setup treesitter with our opts
             -- 3. Skip parser installation (ensure_installed is empty)
             -- 4. Create autocmds for highlighting, indents, folds
-            local lazyvim_config = require("lazyvim.plugins.treesitter")[1].config
-            if type(lazyvim_config) == "function" then
-              lazyvim_config(_, opts)
+
+            -- Find the nvim-treesitter plugin config from LazyVim
+            local lazyvim_plugins = require("lazyvim.plugins.treesitter")
+            local lazyvim_config = nil
+
+            -- Search for the nvim-treesitter plugin spec by identifier
+            for _, plugin_spec in ipairs(lazyvim_plugins) do
+              if plugin_spec[1] == "nvim-treesitter/nvim-treesitter" and
+                 type(plugin_spec.config) == "function" then
+                lazyvim_config = plugin_spec.config
+                break
+              end
             end
+
+            -- Fail if config not found - treesitter setup is critical
+            if not lazyvim_config then
+              error("Failed to find nvim-treesitter config in lazyvim.plugins.treesitter")
+            end
+
+            -- Call LazyVim's config
+            lazyvim_config(_, opts)
           end,
           dev = true,
           pin = true,
