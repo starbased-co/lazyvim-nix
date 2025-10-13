@@ -423,12 +423,38 @@ let
         { "mason-org/mason.nvim", enabled = false },
         { "mason-org/mason-lspconfig.nvim", enabled = false },
         { "jay-babu/mason-nvim-dap.nvim", enabled = false },
-        -- Disable treesitter auto-install - simple approach like your old config
+        -- Configure treesitter to work with Nix-managed parsers
+        -- This mocks the version check and preserves all LazyVim treesitter features
         {
           "nvim-treesitter/nvim-treesitter",
-          build = false,  -- Disable build function that shows update warnings
+          build = false,  -- Don't compile parsers, use Nix ones
           opts = function(_, opts)
+            -- Disable auto-install behavior
+            opts.auto_install = false
             opts.ensure_installed = {}
+            return opts
+          end,
+          config = function(_, opts)
+            -- Mock the version check to bypass LazyVim's compatibility check
+            local TS = require("nvim-treesitter")
+
+            -- Provide get_installed if it doesn't exist (version compatibility)
+            if not TS.get_installed then
+              TS.get_installed = function()
+                -- Return empty list - parsers are managed by Nix
+                return {}
+              end
+            end
+
+            -- Now call LazyVim's default config which will:
+            -- 1. Pass the version check (we mocked get_installed)
+            -- 2. Setup treesitter with our opts
+            -- 3. Skip parser installation (ensure_installed is empty)
+            -- 4. Create autocmds for highlighting, indents, folds
+            local lazyvim_config = require("lazyvim.plugins.treesitter")[1].config
+            if type(lazyvim_config) == "function" then
+              lazyvim_config(_, opts)
+            end
           end,
           dev = true,
           pin = true,
