@@ -774,74 +774,146 @@ in {
         with the corresponding Lua code. These files are automatically loaded by LazyVim.
       '';
     };
+
+    standalone = mkOption {
+      type = types.submodule {
+        options = {
+          enable = mkEnableOption "standalone mode";
+
+          outputName = mkOption {
+            type = types.str;
+            default = "lazyvim-config";
+            description = ''
+              Name of the output derivation.
+              Will be available in home.packages under this name.
+            '';
+          };
+        };
+      };
+      default = { enable = false; };
+      description = ''
+        Build LazyVim configuration as a standalone derivation instead of
+        installing to ~/.config/nvim via home-manager.
+
+        When enabled:
+        - Configuration is built as a derivation in the Nix store
+        - Available via programs.lazyvim.finalConfig
+        - Does NOT create files in ~/.config/nvim
+        - Useful for testing, CI/CD, or project-local configurations
+
+        Example usage:
+          programs.lazyvim = {
+            enable = true;
+            standalone.enable = true;
+            # ... rest of config ...
+          };
+
+          # Access the standalone config:
+          config.programs.lazyvim.finalConfig
+      '';
+    };
+
+    finalConfig = mkOption {
+      type = types.nullOr types.package;
+      default = null;
+      internal = true;
+      description = ''
+        The built standalone LazyVim configuration derivation.
+        Only available when standalone.enable = true.
+        Can be symlinked to any directory for project-local configs.
+      '';
+    };
   };
   
-  config = mkIf cfg.enable {
-    # Ensure neovim is enabled
-    programs.neovim = {
-      enable = true;
-      package = pkgs.neovim-unwrapped;
-            
-      withNodeJs = true;
-      withPython3 = true;
-      withRuby = false;
-      
-      # Add all required packages
-      extraPackages = cfg.extraPackages ++ (with pkgs; [
-        # Required by LazyVim
-        git
-        ripgrep
-        fd
-        
-        # Language servers and tools can be added by the user
-      ]);
-      
-      # Add lazy.nvim as a plugin
-      plugins = [ pkgs.vimPlugins.lazy-nvim ];
-    };
-    
-    # Create LazyVim configuration
-    xdg.configFile = {
-      "nvim/init.lua".text = lazyConfig;
-      
-      # Link treesitter parsers only if parsers are configured
-      "nvim/parser" = mkIf (cfg.treesitterParsers != []) {
-        source = "${treesitterGrammars}/parser";
+  config = mkIf cfg.enable (
+    if cfg.standalone.enable then {
+      # STANDALONE MODE: Build configuration as derivation
+
+      # Build the standalone config
+      programs.lazyvim.finalConfig = pkgs.callPackage ./lib/build-standalone.nix {} {
+        inherit lazyConfig devPath treesitterGrammars extrasConfigFiles;
+        autocmds = cfg.config.autocmds;
+        keymaps = cfg.config.keymaps;
+        options = cfg.config.options;
+        plugins = cfg.plugins;
+        name = cfg.standalone.outputName;
       };
-      
-      # LazyVim config files
-      "nvim/lua/config/autocmds.lua" = mkIf (cfg.config.autocmds != "") {
-        text = ''
-          -- User autocmds configured via Nix
-          ${cfg.config.autocmds}
-        '';
+
+      # Still configure neovim with required packages
+      programs.neovim = {
+        enable = true;
+        package = pkgs.neovim-unwrapped;
+
+        withNodeJs = true;
+        withPython3 = true;
+        withRuby = false;
+
+        extraPackages = cfg.extraPackages ++ (with pkgs; [
+          git
+          ripgrep
+          fd
+        ]);
+
+        plugins = [ pkgs.vimPlugins.lazy-nvim ];
       };
-      
-      "nvim/lua/config/keymaps.lua" = mkIf (cfg.config.keymaps != "") {
-        text = ''
-          -- User keymaps configured via Nix
-          ${cfg.config.keymaps}
-        '';
+    } else {
+      # NORMAL MODE: Use home-manager xdg.configFile (existing behavior)
+
+      programs.neovim = {
+        enable = true;
+        package = pkgs.neovim-unwrapped;
+
+        withNodeJs = true;
+        withPython3 = true;
+        withRuby = false;
+
+        extraPackages = cfg.extraPackages ++ (with pkgs; [
+          git
+          ripgrep
+          fd
+        ]);
+
+        plugins = [ pkgs.vimPlugins.lazy-nvim ];
       };
-      
-      "nvim/lua/config/options.lua" = mkIf (cfg.config.options != "") {
-        text = ''
-          -- User options configured via Nix
-          ${cfg.config.options}
-        '';
-      };
-      
-    }
-    # Generate plugin configuration files
-    // (lib.mapAttrs' (name: content:
-      lib.nameValuePair "nvim/lua/plugins/${name}.lua" {
-        text = ''
-          -- Plugin configuration for ${name} (configured via Nix)
-          ${content}
-        '';
+
+      xdg.configFile = {
+        "nvim/init.lua".text = lazyConfig;
+
+        "nvim/parser" = mkIf (cfg.treesitterParsers != []) {
+          source = "${treesitterGrammars}/parser";
+        };
+
+        "nvim/lua/config/autocmds.lua" = mkIf (cfg.config.autocmds != "") {
+          text = ''
+            -- User autocmds configured via Nix
+            ${cfg.config.autocmds}
+          '';
+        };
+
+        "nvim/lua/config/keymaps.lua" = mkIf (cfg.config.keymaps != "") {
+          text = ''
+            -- User keymaps configured via Nix
+            ${cfg.config.keymaps}
+          '';
+        };
+
+        "nvim/lua/config/options.lua" = mkIf (cfg.config.options != "") {
+          text = ''
+            -- User options configured via Nix
+            ${cfg.config.options}
+          '';
+        };
+
       }
-    ) cfg.plugins)
-    # Generate extras config override files
-    // extrasConfigFiles;
-  };
+      // (lib.mapAttrs' (name: content:
+        lib.nameValuePair "nvim/lua/plugins/${name}.lua" {
+          text = ''
+            -- Plugin configuration for ${name} (configured via Nix)
+            ${content}
+          '';
+        }
+      ) cfg.plugins)
+      // extrasConfigFiles;
+    }
+  );
 }

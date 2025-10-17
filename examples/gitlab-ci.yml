@@ -1,0 +1,115 @@
+# GitLab CI Template for Plugin Testing with LazyVim
+# Place in: .gitlab-ci.yml
+
+image: nixos/nix:latest
+
+# Cache Nix store between jobs
+cache:
+  key: nix-store
+  paths:
+    - /nix/
+
+stages:
+  - build
+  - test
+  - deploy
+
+# Setup Nix
+before_script:
+  - nix-channel --update
+  - nix-env -iA nixpkgs.cachix || true
+
+# Build test configuration
+build:
+  stage: build
+  script:
+    - nix-build tests/plugin-test.nix -A testConfig -o test-nvim
+    - ls -la test-nvim/
+  artifacts:
+    paths:
+      - test-nvim/
+    expire_in: 1 day
+
+# Run plugin load test
+test:load:
+  stage: test
+  dependencies:
+    - build
+  script:
+    - nix-build tests/plugin-test.nix -A testLoad
+  artifacts:
+    when: on_failure
+    paths:
+      - test-nvim/
+
+# Run plugin setup test
+test:setup:
+  stage: test
+  dependencies:
+    - build
+  script:
+    - nix-build tests/plugin-test.nix -A testSetup
+
+# Run comprehensive test suite
+test:all:
+  stage: test
+  dependencies:
+    - build
+  script:
+    - nix-build tests/plugin-test.nix -A testAll
+  artifacts:
+    reports:
+      junit: test-results.xml
+    when: always
+
+# Integration test with real Neovim
+test:integration:
+  stage: test
+  dependencies:
+    - build
+  script:
+    - |
+      cat > test.lua << 'EOF'
+      local M = {}
+      function M.test() print("integration test") end
+      return M
+      EOF
+
+    - nix-shell -p neovim --run "nvim -u test-nvim/init.lua test.lua --headless +quit"
+
+# Optional: Performance test
+test:performance:
+  stage: test
+  dependencies:
+    - build
+  script:
+    - nix-shell -p neovim --run "time nvim -u test-nvim/init.lua --headless --startuptime startup.log +quit"
+    - cat startup.log
+  artifacts:
+    paths:
+      - startup.log
+  only:
+    - main
+    - develop
+
+# Optional: Deploy test config as artifact
+deploy:docs:
+  stage: deploy
+  dependencies:
+    - build
+  script:
+    - mkdir -p public
+    - cp -r test-nvim public/config
+    - echo "Test config deployed"
+  artifacts:
+    paths:
+      - public
+  only:
+    - main
+
+# Minimal template (if you just need basic CI):
+#
+# test:
+#   image: nixos/nix:latest
+#   script:
+#     - nix-build tests/plugin-test.nix -A testCI

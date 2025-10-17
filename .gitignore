@@ -27,7 +27,7 @@ Thumbs.db
 /test/tmp/
 
 # Keep docs directory local only
-/docs/
+/docs/llms
 
 # Keep CLAUDE.md local only
 CLAUDE.md

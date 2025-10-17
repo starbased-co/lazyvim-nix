@@ -1,0 +1,34 @@
+# EditorConfig for lazyvim-nix
+# https://editorconfig.org
+#
+# NOTE: This file provides MINIMAL formatting rules to prevent
+# accidental whitespace/encoding issues. It does NOT enforce
+# strict code style to preserve author's formatting preferences.
+
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.nix]
+indent_style = space
+indent_size = 2
+# Note: No max_line_length enforcement to preserve existing style
+
+[*.lua]
+indent_style = space
+indent_size = 2
+
+[*.md]
+trim_trailing_whitespace = false
+
+[*.json]
+indent_style = space
+indent_size = 2
+
+[*.sh]
+indent_style = space
+indent_size = 2
